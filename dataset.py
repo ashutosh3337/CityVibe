@@ -27,7 +27,7 @@ POIS: List[Dict[str, Any]] = [
         "description": "Grand 18th-century seat of the Peshwas of the Maratha Empire, featuring historic Delhi Darwaza and fortified ramparts.",
         "history": "Built in 1732 by Peshwa Baji Rao I. The fort witnessed the rise and glory of the Maratha Empire with its massive teakwood courtyards.",
         "tags": ["Maratha Empire", "Peshwa History", "Fortress", "Photography"],
-        "imageUrl": "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=800&q=80",
+        "imageUrl": "https://images.unsplash.com/photo-1590766940554-634a7ed41450?auto=format&fit=crop&w=800&q=80",
         "city": "pune"
     },
     {
@@ -377,7 +377,7 @@ POIS: List[Dict[str, Any]] = [
         "description": "Upscale multi-story fashion hub with top international cosmetic brands, Marks & Spencer, lifestyle cafes, and PVR ICON.",
         "history": "Flagship retail destination on Senapati Bapat Road offering convenient shopping for central Pune.",
         "tags": ["SB Road", "PVR ICON", "Premium Apparel", "Fine Dining"],
-        "imageUrl": "https://images.unsplash.com/photo-1555529669-2659e9a4f4d2?auto=format&fit=crop&w=800&q=80",
+        "imageUrl": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=80",
         "city": "pune"
     },
 
@@ -438,7 +438,7 @@ POIS: List[Dict[str, Any]] = [
         "description": "Lush 65-acre campus with Victorian Gothic stone buildings, botanical garden, and lively intellectual atmosphere.",
         "history": "Founded in 1885 by Bal Gangadhar Tilak and Gopal Ganesh Agarkar; alma mater to Indian freedom fighters and thinkers.",
         "tags": ["College Heritage", "Gothic Architecture", "Cultural Heart", "Lush Green"],
-        "imageUrl": "https://images.unsplash.com/photo-1541888946425-d0fbb18f15f6?auto=format&fit=crop&w=800&q=80",
+        "imageUrl": "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=800&q=80",
         "city": "pune"
     },
     {
@@ -457,7 +457,7 @@ POIS: List[Dict[str, Any]] = [
         "description": "Bustling cosmopolitan strip lined with microbreweries, rooftop lounges, live music venues, and European bistros.",
         "history": "Developed into Western Pune's tech and lifestyle hub connecting Hinjawadi IT Park with the city.",
         "tags": ["High Street", "Microbreweries", "Nightlife", "Walkable"],
-        "imageUrl": "https://images.unsplash.com/photo-1517649763962-0c623266ddc0?auto=format&fit=crop&w=800&q=80",
+        "imageUrl": "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=800&q=80",
         "city": "pune"
     },
     {
@@ -495,7 +495,7 @@ POIS: List[Dict[str, Any]] = [
         "description": "Expansive 411-acre campus shaded by century-old banyan trees, housing the iconic colonial Main Building with its 100-ft stone clock tower.",
         "history": "Established in 1949, originally Governor's Monsoon Residence during British rule; earned Pune its title 'Oxford of the East'.",
         "tags": ["Oxford of the East", "Main Building", "Nature Walks", "University Heritage"],
-        "imageUrl": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80",
+        "imageUrl": "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=800&q=80",
         "city": "pune"
     },
 
@@ -646,7 +646,7 @@ POIS: List[Dict[str, Any]] = [
                 "Night Lighting",
                 "Architecture"
         ],
-        "imageUrl": "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=800&q=80",
+        "imageUrl": "https://images.unsplash.com/photo-1590766940554-634a7ed41450?auto=format&fit=crop&w=800&q=80",
         "city": "mumbai"
 },
     {
@@ -958,7 +958,7 @@ POIS: List[Dict[str, Any]] = [
                 "Lower Parel",
                 "Global Brands"
         ],
-        "imageUrl": "https://images.unsplash.com/photo-1567449303078-57ad995bd301?auto=format&fit=crop&w=800&q=80",
+        "imageUrl": "https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=800&q=80",
         "city": "mumbai"
 },
     {
@@ -1274,7 +1274,7 @@ POIS: List[Dict[str, Any]] = [
                 "Diwan-i-Khas",
                 "Lahori Gate"
         ],
-        "imageUrl": "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=800&q=80",
+        "imageUrl": "https://images.unsplash.com/photo-1590766940554-634a7ed41450?auto=format&fit=crop&w=800&q=80",
         "city": "delhi"
 },
     {
@@ -1610,7 +1610,7 @@ POIS: List[Dict[str, Any]] = [
                 "H&M",
                 "Luxury Cosmetics"
         ],
-        "imageUrl": "https://images.unsplash.com/photo-1567449303078-57ad995bd301?auto=format&fit=crop&w=800&q=80",
+        "imageUrl": "https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=800&q=80",
         "city": "delhi"
 },
     {
@@ -1830,7 +1830,7 @@ POIS: List[Dict[str, Any]] = [
                 "Windsor Style",
                 "Royal Palace"
         ],
-        "imageUrl": "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=800&q=80",
+        "imageUrl": "https://images.unsplash.com/photo-1590766940554-634a7ed41450?auto=format&fit=crop&w=800&q=80",
         "city": "bengaluru"
 },
     {
@@ -2166,7 +2166,7 @@ POIS: List[Dict[str, Any]] = [
                 "Luxury Flagship",
                 "Rooftop Piazza"
         ],
-        "imageUrl": "https://images.unsplash.com/photo-1567449303078-57ad995bd301?auto=format&fit=crop&w=800&q=80",
+        "imageUrl": "https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=800&q=80",
         "city": "bengaluru"
 },
     {
@@ -2214,7 +2214,7 @@ POIS: List[Dict[str, Any]] = [
                 "Shopping Mall",
                 "East Bangalore"
         ],
-        "imageUrl": "https://images.unsplash.com/photo-1567449303078-57ad995bd301?auto=format&fit=crop&w=800&q=80",
+        "imageUrl": "https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=800&q=80",
         "city": "bengaluru"
 },
     {
@@ -2458,7 +2458,7 @@ POIS: List[Dict[str, Any]] = [
                 "Maota Lake",
                 "Rajput Architecture"
         ],
-        "imageUrl": "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=800&q=80",
+        "imageUrl": "https://images.unsplash.com/photo-1590766940554-634a7ed41450?auto=format&fit=crop&w=800&q=80",
         "city": "jaipur"
 },
     {
@@ -2530,7 +2530,7 @@ POIS: List[Dict[str, Any]] = [
                 "Military Fortress",
                 "Aravalli Views"
         ],
-        "imageUrl": "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=800&q=80",
+        "imageUrl": "https://images.unsplash.com/photo-1590766940554-634a7ed41450?auto=format&fit=crop&w=800&q=80",
         "city": "jaipur"
 },
     {
@@ -2818,7 +2818,7 @@ POIS: List[Dict[str, Any]] = [
                 "Malviya Nagar",
                 "Modern Shopping"
         ],
-        "imageUrl": "https://images.unsplash.com/photo-1567449303078-57ad995bd301?auto=format&fit=crop&w=800&q=80",
+        "imageUrl": "https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=800&q=80",
         "city": "jaipur"
 },
     {

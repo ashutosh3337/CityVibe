@@ -134,14 +134,18 @@ body {
   -webkit-backdrop-filter: blur(20px);
   background: var(--bg-glass);
   border-bottom: 1px solid var(--border-subtle);
-  padding: 0.65rem 1.4rem;
-  height: 62px;
+  padding: 0.55rem 1.2rem;
+  height: auto;
+  min-height: 56px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.65rem;
   box-shadow: var(--shadow-sm);
   transition: background 0.3s ease, border-color 0.3s ease;
+  flex-wrap: wrap;
+  overflow: hidden;
+  max-width: 100vw;
 }
 
 .logo-container {
@@ -159,8 +163,8 @@ body {
 }
 
 .logo-icon {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   border-radius: var(--radius-sm);
   background: var(--gradient-brand);
   display: flex;
@@ -168,18 +172,19 @@ body {
   justify-content: center;
   box-shadow: 0 0 14px rgba(6, 182, 212, 0.35);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
 }
 
 .logo-icon svg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   color: #fff;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
 .logo-text h1 {
   font-family: var(--font-display);
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-weight: 800;
   letter-spacing: -0.025em;
   background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-cyan) 50%, var(--accent-purple) 100%);
@@ -208,14 +213,16 @@ body {
 .city-sensor-bar {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 0.5rem;
   background: var(--bg-surface);
-  padding: 0.25rem 0.75rem;
+  padding: 0.2rem 0.6rem;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-subtle);
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   box-shadow: var(--shadow-sm);
-  flex-shrink: 0;
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .sensor-item {
@@ -277,27 +284,36 @@ body {
 
 .nav-tabs {
   display: flex;
-  gap: 0.25rem;
+  gap: 0.2rem;
   background: var(--bg-surface);
-  padding: 0.25rem;
+  padding: 0.2rem;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-sm);
-  flex-shrink: 0;
+  flex-shrink: 1;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.nav-tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .nav-btn {
-  padding: 0.35rem 0.85rem;
+  padding: 0.3rem 0.7rem;
   border-radius: var(--radius-sm);
   border: none;
   background: transparent;
   color: var(--text-secondary);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.3rem;
+  white-space: nowrap;
+  flex-shrink: 0;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -316,7 +332,7 @@ body {
 .app-container {
   display: grid;
   grid-template-columns: 1fr;
-  height: calc(100vh - 62px);
+  height: calc(100vh - 56px);
   overflow: hidden;
 }
 
@@ -343,12 +359,12 @@ body {
   }
 }
 
-/* Tab 1: 3-Area Balanced Dashboard Layout (42% Sidebar, 58% Map) */
+/* Tab 1: Single-Column Hotspot Cards (45% Sidebar) + Map (55%) */
 .map-view-layout {
   display: grid;
-  grid-template-columns: 42% 58%;
-  height: calc(100vh - 62px);
-  max-height: calc(100vh - 62px);
+  grid-template-columns: 45% 55%;
+  height: calc(100vh - 56px);
+  max-height: calc(100vh - 56px);
   width: 100%;
   overflow: hidden;
 }
@@ -417,10 +433,10 @@ body {
 }
 
 .poi-list {
-  padding: 0.65rem 0.75rem;
+  padding: 0.75rem 0.85rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
   flex: 1;
   min-height: 0;
   overflow-y: auto;
@@ -437,16 +453,16 @@ body {
   border-radius: var(--radius-sm);
 }
 
-/* Modern Curated Place Card (Equal-Sized, Clean Square Framing) */
+/* Modern Curated Place Card — Full-Width Single Column with Large Image */
 .poi-card {
   background: var(--bg-glass-card);
   border: 1px solid var(--border-glass);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-lg);
   cursor: pointer;
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -464,11 +480,11 @@ body {
   box-shadow: 0 0 0 2px var(--accent-cyan-glow);
 }
 
-/* Image Wrap with Gradient Cover */
+/* Image Wrap with Gradient Cover — Large Prominent Cover Photo */
 .poi-card-img-wrap {
   position: relative;
   width: 100%;
-  height: 120px;
+  height: 170px;
   overflow: hidden;
   background: var(--bg-surface);
 }
@@ -493,9 +509,9 @@ body {
 
 .poi-card-top-tags {
   position: absolute;
-  top: 6px;
-  left: 6px;
-  right: 6px;
+  top: 10px;
+  left: 10px;
+  right: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -511,20 +527,20 @@ body {
   backdrop-filter: blur(6px);
   border: 1px solid rgba(245, 158, 11, 0.5);
   color: #fbbf24;
-  padding: 0.15rem 0.45rem;
+  padding: 0.25rem 0.6rem;
   border-radius: var(--radius-sm);
-  font-size: 0.72rem;
+  font-size: 0.82rem;
   font-weight: 800;
   display: flex;
   align-items: center;
-  gap: 0.2rem;
+  gap: 0.25rem;
 }
 
 .poi-card-img-bottom-bar {
   position: absolute;
-  bottom: 6px;
-  left: 6px;
-  right: 6px;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -534,16 +550,16 @@ body {
 .poi-vibe-pill {
   background: rgba(139, 92, 246, 0.9);
   color: #ffffff;
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  padding: 0.15rem 0.45rem;
+  padding: 0.25rem 0.6rem;
   border-radius: var(--radius-sm);
 }
 
 .poi-safety-indicator {
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  padding: 0.15rem 0.45rem;
+  padding: 0.25rem 0.6rem;
   border-radius: var(--radius-sm);
 }
 
@@ -557,9 +573,9 @@ body {
   color: #ffffff;
 }
 
-/* Card Body */
+/* Card Body — Spacious Readable Layout */
 .poi-card-body {
-  padding: 0.85rem;
+  padding: 0.85rem 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
@@ -573,7 +589,7 @@ body {
 
 .poi-title {
   font-family: var(--font-display);
-  font-size: 0.98rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.25;
@@ -587,14 +603,12 @@ body {
 
 .poi-neighborhood-tag {
   color: var(--accent-cyan);
-  font-size: 0.76rem;
+  font-size: 0.82rem;
   font-weight: 600;
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  flex-wrap: wrap;
 }
 
 [data-theme="light"] .poi-neighborhood-tag {
@@ -610,9 +624,9 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  padding: 0.2rem 0.5rem;
+  padding: 0.25rem 0.6rem;
   border-radius: var(--radius-sm);
-  font-size: 0.68rem;
+  font-size: 0.76rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -653,9 +667,9 @@ body {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0.35rem;
-  margin-top: 0.25rem;
+  margin-top: 0.35rem;
   background: var(--bg-surface);
-  padding: 0.4rem;
+  padding: 0.5rem 0.4rem;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-subtle);
 }
@@ -669,7 +683,7 @@ body {
 }
 
 .mini-score-box .mini-label {
-  font-size: 0.64rem;
+  font-size: 0.72rem;
   text-transform: uppercase;
   color: var(--text-muted);
   font-weight: 600;
@@ -677,7 +691,7 @@ body {
 }
 
 .mini-score-box .mini-val {
-  font-size: 0.76rem;
+  font-size: 0.85rem;
   font-weight: 800;
 }
 
@@ -706,28 +720,28 @@ body {
 }
 
 .poi-desc {
-  font-size: 0.78rem;
+  font-size: 0.84rem;
   color: var(--text-secondary);
-  line-height: 1.4;
+  line-height: 1.45;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  max-height: 2.8em;
-  margin-top: 0.1rem;
+  max-height: 2.9em;
+  margin-top: 0.15rem;
 }
 
 .poi-card-actions {
   display: flex;
-  gap: 0.45rem;
-  margin-top: 0.45rem;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 .btn-card-details,
 .btn-card-route {
   flex: 1;
-  padding: 0.45rem 0.65rem;
-  font-size: 0.75rem;
+  padding: 0.5rem 0.6rem;
+  font-size: 0.82rem;
   font-weight: 700;
   border-radius: var(--radius-sm);
   cursor: pointer;
@@ -1584,33 +1598,182 @@ input:checked+.toggle-slider:before {
   cursor: pointer;
 }
 
+/* ============================================================
+   RESPONSIVE DESIGN SYSTEM
+   Breakpoints: Desktop ≥1366 | Tablet 768–1100 | Mobile ≤767
+   ============================================================ */
+
+/* --- Large Desktop (≥1366px) — Baseline Enhancements --- */
+@media (min-width: 1366px) {
+  .header {
+    padding: 0.6rem 1.8rem;
+    min-height: 58px;
+    gap: 0.85rem;
+  }
+
+  .logo-icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .logo-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .logo-text h1 {
+    font-size: 1.3rem;
+  }
+
+  .logo-text span {
+    font-size: 0.7rem;
+  }
+
+  .nav-btn {
+    padding: 0.35rem 0.9rem;
+    font-size: 0.8rem;
+  }
+
+  .city-sensor-bar {
+    font-size: 0.78rem;
+    padding: 0.25rem 0.75rem;
+  }
+
+  .app-container {
+    height: calc(100vh - 58px);
+  }
+
+  .map-view-layout {
+    grid-template-columns: 45% 55%;
+    height: calc(100vh - 58px);
+    max-height: calc(100vh - 58px);
+  }
+}
+
+/* --- Tablet Landscape & Small Desktop (1100px - 1365px) --- */
+@media (max-width: 1365px) and (min-width: 1101px) {
+  .map-view-layout {
+    grid-template-columns: 42% 58%;
+  }
+}
+
+/* --- Tablet (768px - 1100px) --- */
 @media (max-width: 1100px) {
   .header {
     flex-wrap: wrap;
-    gap: 0.75rem;
+    min-height: 50px;
+    padding: 0.5rem 0.85rem;
+    gap: 0.4rem;
+  }
+
+  .logo-container {
+    order: 1;
   }
 
   .city-sensor-bar {
     order: 3;
     width: 100%;
-    justify-content: space-around;
+    justify-content: space-between;
     overflow-x: auto;
+    scrollbar-width: none;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.72rem;
+    gap: 0.4rem;
   }
 
-  .map-view-layout {
-    grid-template-columns: 360px 1fr;
-  }
-}
-
-@media (max-width: 860px) {
-  .header {
-    padding: 0.75rem 1rem;
+  .city-sensor-bar::-webkit-scrollbar {
+    display: none;
   }
 
   .nav-tabs {
+    order: 2;
+    flex-shrink: 1;
+    min-width: 0;
+  }
+
+  .nav-btn {
+    padding: 0.3rem 0.65rem;
+    font-size: 0.74rem;
+    white-space: nowrap;
+  }
+
+  .theme-toggle-btn .theme-label {
+    display: none;
+  }
+
+  /* Tab 1: Sidebar with single-col cards + map */
+  .map-view-layout {
+    grid-template-columns: 40% 60%;
+    height: calc(100vh - 100px);
+    max-height: calc(100vh - 100px);
+  }
+
+  .app-container {
+    height: auto;
+    overflow: visible;
+  }
+
+  /* Tab 2: Routing — 2-column */
+  .routing-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  /* Tab 3: Comparison — keep 2-column selectors */
+  .compare-selectors {
+    grid-template-columns: 1fr 1fr auto;
+    gap: 0.75rem;
+  }
+
+  /* Tab 4: Reports — proportional */
+  .reports-layout {
+    grid-template-columns: 360px 1fr;
+    gap: 1rem;
+  }
+
+  .section-container {
+    padding: 1rem 0.85rem;
+  }
+
+  .section-title-wrap h2 {
+    font-size: 1.4rem;
+  }
+}
+
+/* --- Tablet Portrait (768px - 860px) — stack sidebars --- */
+@media (max-width: 860px) {
+  .header {
+    padding: 0.5rem 0.75rem;
+    gap: 0.35rem;
+  }
+
+  .logo-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .logo-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .logo-text h1 {
+    font-size: 1.05rem;
+  }
+
+  .logo-text span {
+    font-size: 0.58rem;
+  }
+
+  /* Nav tabs — horizontally scrollable */
+  .nav-tabs {
+    order: 4;
+    width: 100%;
     overflow-x: auto;
-    max-width: 100%;
     scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
   }
 
   .nav-tabs::-webkit-scrollbar {
@@ -1618,12 +1781,13 @@ input:checked+.toggle-slider:before {
   }
 
   .nav-btn {
-    padding: 0.45rem 0.85rem;
-    font-size: 0.8rem;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.76rem;
     white-space: nowrap;
+    flex-shrink: 0;
   }
 
-  /* Mobile Map & Collapsible Sidebar */
+  /* Tab 1: Mobile Collapsible Sidebar over Map */
   .mobile-sidebar-toggle {
     display: flex;
   }
@@ -1636,6 +1800,7 @@ input:checked+.toggle-slider:before {
     grid-template-columns: 1fr;
     position: relative;
     height: calc(100vh - 120px);
+    max-height: calc(100vh - 120px);
   }
 
   .sidebar-panel {
@@ -1643,8 +1808,8 @@ input:checked+.toggle-slider:before {
     top: 0;
     left: 0;
     bottom: 0;
-    width: 360px;
-    max-width: 88vw;
+    width: 400px;
+    max-width: 92vw;
     z-index: 1000;
     transform: translateX(-105%);
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1655,44 +1820,452 @@ input:checked+.toggle-slider:before {
     transform: translateX(0);
   }
 
-  .map-wrapper {
-    height: 100%;
+  /* Single column cards in mobile sidebar */
+  .poi-list {
+    gap: 0.85rem;
   }
 
-  /* Grid Stackings */
-  .routing-grid,
-  .reports-layout,
+  .map-wrapper {
+    height: 100%;
+    min-height: 350px;
+  }
+
+  /* Tab 2: Routing — stack vertically */
+  .routing-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem;
+  }
+
+  .routing-grid .glass-card {
+    max-width: 100%;
+  }
+
+  /* Route map contained height */
+  .route-display-column .glass-card {
+    height: 320px !important;
+  }
+
+  /* Tab 3: Comparison — stack selectors */
   .compare-selectors {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem;
+  }
+
+  .compare-selectors .btn-primary {
+    width: 100%;
+  }
+
+  /* Comparison table horizontal scroll */
+  .comparison-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .vibe-table {
+    min-width: 600px;
+  }
+
+  /* Tab 4: Reports — stack vertically */
+  .reports-layout {
     grid-template-columns: 1fr !important;
   }
 
+  /* Chat / AI concierge adjustments */
   .chat-box-container {
-    height: 480px;
+    height: 420px;
   }
 
-  .city-sensor-bar {
-    font-size: 0.75rem;
-    padding: 0.35rem 0.75rem;
-    gap: 0.6rem;
+  /* Section container adjustments */
+  .section-container {
+    padding: 1rem 0.85rem;
+  }
+
+  .section-title-wrap h2 {
+    font-size: 1.35rem;
+  }
+
+  .section-title-wrap p {
+    font-size: 0.85rem;
+  }
+
+  /* Modal on tablet */
+  .modal-content {
+    max-width: 90vw;
+    margin: 1rem;
   }
 }
 
+/* --- Mobile (≤480px) — Full mobile optimization --- */
 @media (max-width: 480px) {
+  .header {
+    padding: 0.5rem 0.65rem;
+    gap: 0.35rem;
+  }
+
+  .logo-container {
+    gap: 0.5rem;
+  }
+
+  .logo-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .logo-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
   .logo-text h1 {
-    font-size: 1.15rem;
+    font-size: 1.05rem;
+  }
+
+  .logo-text span {
+    font-size: 0.58rem;
+    letter-spacing: 0.04em;
+  }
+
+  /* Sensor bar compact on mobile */
+  .city-sensor-bar {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.5rem;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .sensor-item {
+    font-size: 0.7rem;
+    gap: 0.2rem;
   }
 
   .sensor-item strong {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
   }
 
-  .poi-thumb-img {
-    width: 64px;
-    height: 64px;
+  .city-select-dropdown {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.35rem;
+  }
+
+  /* AI Status pill compact */
+  #aiStatusPill {
+    font-size: 0.65rem !important;
+    padding: 1px 6px !important;
+  }
+
+  /* Theme toggle compact */
+  .theme-toggle-btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.72rem;
+    gap: 0.3rem;
+  }
+
+  .theme-toggle-btn .theme-label {
+    display: none;
+  }
+
+  .theme-icon {
+    font-size: 0.85rem;
+  }
+
+  /* Nav tabs — horizontally scrollable, full width */
+  .nav-tabs {
+    order: 4;
+    width: 100%;
+    padding: 0.2rem;
+    gap: 0.15rem;
+  }
+
+  .nav-btn {
+    padding: 0.4rem 0.65rem;
+    font-size: 0.72rem;
+    gap: 0.2rem;
+  }
+
+  /* Map layout on mobile */
+  .map-view-layout {
+    height: calc(100vh - 150px);
+    max-height: calc(100vh - 150px);
+  }
+
+  .sidebar-panel {
+    width: 100%;
+    max-width: 100vw;
+  }
+
+  /* Mobile toggle button */
+  .mobile-sidebar-toggle {
+    top: 10px;
+    left: 10px;
+    padding: 0.5rem 0.85rem;
+    font-size: 0.78rem;
+  }
+
+  /* POI cards on mobile — compact images */
+  .poi-card-img-wrap {
+    height: 140px;
+  }
+
+  .poi-card-body {
+    padding: 0.65rem;
+    gap: 0.25rem;
+  }
+
+  .poi-title {
+    font-size: 0.88rem;
+  }
+
+  .poi-neighborhood-tag {
+    font-size: 0.7rem;
+  }
+
+  .poi-desc {
+    font-size: 0.72rem;
+  }
+
+  .poi-scores-row {
+    gap: 0.25rem;
+    padding: 0.3rem;
+  }
+
+  .mini-score-box .mini-label {
+    font-size: 0.58rem;
+  }
+
+  .mini-score-box .mini-val {
+    font-size: 0.7rem;
+  }
+
+  .poi-card-actions {
+    gap: 0.35rem;
+    margin-top: 0.35rem;
+  }
+
+  .btn-card-details,
+  .btn-card-route {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.7rem;
+  }
+
+  /* Section containers */
+  .section-container {
+    padding: 0.85rem 0.65rem;
+  }
+
+  .section-title-wrap h2 {
+    font-size: 1.15rem;
+  }
+
+  .section-title-wrap p {
+    font-size: 0.8rem;
+  }
+
+  /* Glass card on mobile */
+  .glass-card {
+    padding: 1rem;
+  }
+
+  .glass-card h3 {
+    font-size: 0.95rem !important;
+  }
+
+  /* Form controls on mobile */
+  .form-control {
+    padding: 0.7rem 0.85rem;
+    font-size: 0.85rem;
+  }
+
+  .form-group label {
+    font-size: 0.7rem;
+  }
+
+  .btn-primary {
+    padding: 0.8rem 1rem;
+    font-size: 0.88rem;
+  }
+
+  /* Route map on mobile */
+  .route-display-column .glass-card {
+    height: 280px !important;
+  }
+
+  /* Route cards */
+  .route-card {
+    padding: 0.85rem;
+  }
+
+  .route-card-header h3 {
+    font-size: 0.95rem !important;
+  }
+
+  .route-stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.4rem;
+    padding: 0.5rem;
+  }
+
+  .stat-box span {
+    font-size: 0.62rem;
+  }
+
+  .stat-box strong {
+    font-size: 0.88rem;
+  }
+
+  /* Comparison table on mobile */
+  .vibe-table th,
+  .vibe-table td {
+    padding: 0.65rem 0.75rem;
+    font-size: 0.78rem;
+  }
+
+  /* Reports cards */
+  .report-item-card {
+    padding: 0.85rem;
+  }
+
+  /* Filter chips on mobile */
+  .filter-group {
+    gap: 0.25rem;
+  }
+
+  .filter-chip {
+    padding: 0.18rem 0.45rem;
+    font-size: 0.68rem;
+  }
+
+  /* Modals on mobile */
+  .modal-backdrop {
+    padding: 0.5rem;
   }
 
   .modal-content {
-    margin: 0.5rem;
-    max-height: 92vh;
+    margin: 0;
+    max-width: 100%;
+    max-height: 95vh;
+    border-radius: var(--radius-md);
+  }
+
+  .modal-image {
+    height: 160px;
+  }
+
+  .modal-body {
+    padding: 1rem;
+  }
+
+  /* Map controls overlay */
+  .map-controls-overlay {
+    top: 50px;
+    right: 0.5rem;
+  }
+
+  .layer-toggle-card {
+    padding: 0.5rem 0.65rem;
+    font-size: 0.7rem;
+  }
+
+  .toggle-item {
+    font-size: 0.7rem;
+    gap: 0.5rem;
+  }
+
+  /* Route map legend */
+  .route-map-legend-overlay {
+    font-size: 0.65rem;
+    padding: 3px 8px;
+  }
+
+  /* AI Chat Modal */
+  #apiKeyModalBackdrop .modal-content {
+    max-width: 100%;
+    border-radius: var(--radius-md);
+  }
+
+  .prompt-chips {
+    gap: 0.35rem;
+  }
+
+  .prompt-chip {
+    font-size: 0.68rem;
+    padding: 0.3rem 0.6rem;
+  }
+
+  /* Prevent horizontal overflow everywhere */
+  .sidebar-header h2 {
+    font-size: 0.85rem;
+  }
+}
+
+/* --- Extra small mobile (≤375px) --- */
+@media (max-width: 375px) {
+  .header {
+    padding: 0.4rem 0.5rem;
+  }
+
+  .logo-text h1 {
+    font-size: 0.95rem;
+  }
+
+  .logo-text span {
+    font-size: 0.55rem;
+  }
+
+  .nav-btn {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.68rem;
+  }
+
+  .city-sensor-bar {
+    font-size: 0.65rem;
+    gap: 0.25rem;
+  }
+
+  .sensor-item {
+    font-size: 0.65rem;
+  }
+
+  .section-title-wrap h2 {
+    font-size: 1rem;
+  }
+
+  .poi-card-img-wrap {
+    height: 90px;
+  }
+
+  .map-view-layout {
+    height: calc(100vh - 160px);
+    max-height: calc(100vh - 160px);
+  }
+}
+
+/* --- Global: Prevent horizontal scrollbar --- */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* --- Leaflet map responsiveness --- */
+.leaflet-control-zoom {
+  border-radius: var(--radius-sm) !important;
+}
+
+.leaflet-popup-content {
+  max-width: 260px;
+  word-wrap: break-word;
+}
+
+@media (max-width: 480px) {
+  .leaflet-popup-content {
+    max-width: 200px;
+    font-size: 0.78rem;
+  }
+
+  .leaflet-control-zoom a {
+    width: 30px !important;
+    height: 30px !important;
+    line-height: 30px !important;
+    font-size: 16px !important;
   }
 }

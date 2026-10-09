@@ -10,11 +10,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
   
+  <meta name="referrer" content="no-referrer">
+  
   <!-- Leaflet Map CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
   
   <!-- App Style -->
-  <link rel="stylesheet" href="/style.css?v=2.1">
+  <link rel="stylesheet" href="/style.css?v=3.3">
 </head>
 <body>
 
@@ -327,7 +329,7 @@
   <div class="modal-backdrop" id="poiModalBackdrop" onclick="closePoiModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
       <button class="close-btn" onclick="closePoiModal()">✕</button>
-      <img id="modalPoiImage" class="modal-image" src="" alt="Landmark Image">
+      <img id="modalPoiImage" class="modal-image" src="" alt="Landmark Image" referrerpolicy="no-referrer">
       <div class="modal-body">
         <div style="display: flex; justify-content: space-between; align-items: flex-start;">
           <div>
@@ -409,6 +411,6 @@
 
   <!-- Leaflet & App JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script src="/app.js?v=2.1"></script>
+  <script src="/app.js?v=3.3"></script>
 </body>
 </html>

@@ -92,23 +92,39 @@ function initMap() {
   map = L.map('leafletMap', {
     center: [18.5204, 73.8567],
     zoom: 13,
-    zoomControl: true
+    zoomControl: true,
+    preferCanvas: true
   });
 
   // OpenStreetMap standard tiles (100% free, authorized, zero API key watermarks)
   const osmTile = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',
     subdomains: ['a', 'b', 'c'],
-    maxZoom: 19
+    maxZoom: 19,
+    keepBuffer: 8,
+    crossOrigin: true
   });
 
   osmTile.addTo(map);
+
+  // Invalidate map size multiple times after layout rendering to eliminate any black rectangular areas
+  map.whenReady(() => {
+    setTimeout(() => { if (map) map.invalidateSize(); }, 150);
+    setTimeout(() => { if (map) map.invalidateSize(); }, 500);
+    setTimeout(() => { if (map) map.invalidateSize(); }, 1200);
+  });
 
   poiLayerGroup = L.layerGroup().addTo(map);
   hazardLayerGroup = L.layerGroup().addTo(map);
   reportsLayerGroup = L.layerGroup().addTo(map);
   routeLayerGroup = L.layerGroup().addTo(map);
 }
+
+// Global window resize listener to keep map tiles seamless without blank areas
+window.addEventListener('resize', () => {
+  if (map) map.invalidateSize();
+  if (routeMap) routeMap.invalidateSize();
+});
 
 // 2. Fetch Data from FastAPI Backend with Resilient Fallback
 async function loadInitialData() {
@@ -178,8 +194,8 @@ function renderPoiList(items) {
     const cleanlinessScore = poi.cleanlinessScore !== undefined && poi.cleanlinessScore !== null ? poi.cleanlinessScore : '4.2';
     const neighborhood = poi.neighborhood || 'City Center';
     const priceLevel = poi.priceLevel || 'Budget-Friendly';
-    const description = poi.description || 'Verified exploration hotspot with comprehensive safety metrics.';
-    const imageUrl = poi.imageUrl || 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=600&q=80';
+    const defaultFallbackUrl = 'https://images.unsplash.com/photo-1590766940554-634a7ed41450?auto=format&fit=crop&w=800&q=80';
+    const imageUrl = poi.imageUrl || defaultFallbackUrl;
     const vibeScore = Math.round(((safetyScore * 0.4) + (cleanlinessScore * 0.3) + (rating * 0.3)) * 20);
 
     // Safety Indicator Status
@@ -189,7 +205,7 @@ function renderPoiList(items) {
 
     card.innerHTML = `
       <div class="poi-card-img-wrap">
-        <img src="${imageUrl}" alt="${name}" class="poi-card-img" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=600&q=80'">
+        <img src="${imageUrl}" alt="${name}" class="poi-card-img" loading="lazy" referrerpolicy="no-referrer" crossorigin="anonymous" onerror="if(this.dataset.fallbackApplied !== '1'){ this.dataset.fallbackApplied = '1'; this.src='${defaultFallbackUrl}'; }">
         <div class="poi-card-gradient-overlay"></div>
         <div class="poi-card-top-tags">
           <span class="badge ${badgeClass} poi-card-overlay-badge">${category}</span>
@@ -207,7 +223,7 @@ function renderPoiList(items) {
         <div class="poi-neighborhood-tag">
           <span class="loc-pin">📍</span> <span>${neighborhood}</span> • <span class="poi-price-tag">${priceLevel}</span>
         </div>
-        <div class="poi-info-highlight" style="font-size: 0.74rem; color: var(--accent-cyan); display: flex; align-items: center; gap: 0.35rem; margin-top: 0.1rem; font-weight: 600;">
+        <div class="poi-info-highlight" style="font-size: 0.82rem; color: var(--accent-cyan); display: flex; align-items: center; gap: 0.35rem; margin-top: 0.1rem; font-weight: 600;">
           <span>🕒 Best: ${poi.bestTimeToVisit || '10:00 AM - 8:00 PM'}</span>
           <span style="color: var(--text-muted);">•</span>
           <span style="color: var(--text-secondary);">${poi.type || 'Urban Hotspot'}</span>
@@ -499,13 +515,22 @@ function initRouteMap() {
   routeMap = L.map('routeMap', {
     center: [18.5204, 73.8567],
     zoom: 12,
-    zoomControl: true
+    zoomControl: true,
+    preferCanvas: true
   });
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap',
-    maxZoom: 19
+    subdomains: ['a', 'b', 'c'],
+    maxZoom: 19,
+    keepBuffer: 8,
+    crossOrigin: true
   }).addTo(routeMap);
+
+  routeMap.whenReady(() => {
+    setTimeout(() => { if (routeMap) routeMap.invalidateSize(); }, 150);
+    setTimeout(() => { if (routeMap) routeMap.invalidateSize(); }, 500);
+  });
 
   routeMapSafeLayer = L.layerGroup().addTo(routeMap);
   routeMapFastLayer = L.layerGroup().addTo(routeMap);

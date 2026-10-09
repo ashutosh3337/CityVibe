@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
   
   <!-- App Style -->
-  <link rel="stylesheet" href="/style.css?v=2.1">
+  <link rel="stylesheet" href="/style.css?v=3.2">
 </head>
 <body>
 
@@ -192,10 +192,10 @@
 
         <!-- Route Comparison & Map Display Output -->
         <div class="route-display-column">
-          <!-- Live Route Interactive Leaflet Map -->
-          <div class="glass-card" style="padding: 0; overflow: hidden; margin-bottom: 1.5rem; height: 320px; position: relative;">
+          <!-- Live Route Interactive Leaflet Map (Contained & Centered) -->
+          <div class="glass-card" style="padding: 0; overflow: hidden; margin-bottom: 1.25rem; height: 380px; position: relative; border-radius: var(--radius-sm); border: 1px solid var(--border-glass);">
             <div id="routeMap" style="width: 100%; height: 100%; background: var(--bg-primary);"></div>
-            <div style="position: absolute; bottom: 10px; left: 10px; z-index: 500; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; border: 1px solid var(--border-glass);">
+            <div class="route-map-legend-overlay">
               <span style="color: #10b981; font-weight: 700;">🟢 Safe Boulevard</span> &nbsp;|&nbsp; 
               <span style="color: #f59e0b; font-weight: 700;">🟠 Direct Arterial</span>
             </div>

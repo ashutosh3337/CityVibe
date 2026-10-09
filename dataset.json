@@ -3156,6 +3156,7 @@
       "lat": 18.562,
       "lng": 73.842,
       "radius": 300,
+      "city": "pune",
       "reason": "Narrow underbridge with intermittent sodium lighting; isolated pedestrian pathway after 11 PM.",
       "recommendedPrecaution": "Prefer Pune-Mumbai Old Highway main arterial with 24/7 streetlights and cab movement.",
       "verifiedReportsCount": 18,
@@ -3169,15 +3170,129 @@
       "lat": 18.539,
       "lng": 73.831,
       "radius": 400,
+      "city": "pune",
       "reason": "Ongoing integrated Metro flyover construction causing slow peak-hour transit towards Aundh.",
       "recommendedPrecaution": "Use Senapati Bapat Road or Pashan link road to reach Baner during rush hours.",
       "verifiedReportsCount": 45,
       "updatedAt": "20 mins ago"
+    },
+    {
+      "id": "risk-mum-1",
+      "name": "Sakinaka Junction & Andheri-Kurla Rd",
+      "type": "Peak Hour Dense Traffic Gridlock",
+      "severity": "medium",
+      "lat": 19.1025,
+      "lng": 72.887,
+      "radius": 450,
+      "city": "mumbai",
+      "reason": "Commercial freight and metro interchange bottlenecks during 5:30 PM - 8:30 PM rush.",
+      "recommendedPrecaution": "Use Mumbai Metro Line 1 (Ghatkopar to Versova) for uninterrupted east-west transit.",
+      "verifiedReportsCount": 38,
+      "updatedAt": "15 mins ago"
+    },
+    {
+      "id": "risk-mum-2",
+      "name": "Worli Seaface Coastal Road Merger",
+      "type": "Monsoon High Tide & Road Merge Caution",
+      "severity": "low",
+      "lat": 19.015,
+      "lng": 72.818,
+      "radius": 400,
+      "city": "mumbai",
+      "reason": "High sea waves and coastal road merge junction requires disciplined driving speed.",
+      "recommendedPrecaution": "Follow BMC coastal speed limits (60 km/h) and stay on illuminated promenade walkway.",
+      "verifiedReportsCount": 24,
+      "updatedAt": "40 mins ago"
+    },
+    {
+      "id": "risk-mum-3",
+      "name": "Sion Circle & Railway Colony Underpass",
+      "type": "Low Lying Water Logging Zone",
+      "severity": "high",
+      "lat": 19.039,
+      "lng": 72.862,
+      "radius": 350,
+      "city": "mumbai",
+      "reason": "Sudden drainage overflow risk during monsoon high-intensity showers.",
+      "recommendedPrecaution": "Use Eastern Freeway elevated corridor for South Mumbai transit during rain alerts.",
+      "verifiedReportsCount": 52,
+      "updatedAt": "5 mins ago"
+    },
+    {
+      "id": "risk-blr-1",
+      "name": "Silk Board Junction (Outer Ring Rd)",
+      "type": "Heavy Peak Transit Bottleneck",
+      "severity": "high",
+      "lat": 12.9175,
+      "lng": 77.6235,
+      "radius": 500,
+      "city": "bengaluru",
+      "reason": "Major interchange linking Electronic City, BTM Layout, and HSR Layout experiencing evening crawls.",
+      "recommendedPrecaution": "Use Electronic City Elevated Tollway or take Hosur Road arterial early.",
+      "verifiedReportsCount": 89,
+      "updatedAt": "10 mins ago"
+    },
+    {
+      "id": "risk-blr-2",
+      "name": "Sony World Signal (Koramangala 100ft Rd)",
+      "type": "Pedestrian & Food Katta Congestion",
+      "severity": "low",
+      "lat": 12.9352,
+      "lng": 77.6245,
+      "radius": 300,
+      "city": "bengaluru",
+      "reason": "High weekend pedestrian footfall and valet parking queues outside popular restaurants.",
+      "recommendedPrecaution": "Park at designated Koramangala municipal complex and explore on foot.",
+      "verifiedReportsCount": 31,
+      "updatedAt": "35 mins ago"
+    },
+    {
+      "id": "risk-blr-3",
+      "name": "Hebbal Flyover Airport Inflow Merge",
+      "type": "High Speed Highway Merger Point",
+      "severity": "medium",
+      "lat": 13.0358,
+      "lng": 77.597,
+      "radius": 450,
+      "city": "bengaluru",
+      "reason": "Multi-lane traffic converging into 2-lane flyover ramp from Bellary Road.",
+      "recommendedPrecaution": "Maintain safe vehicle distance and follow dedicated airport express bus lane markings.",
+      "verifiedReportsCount": 42,
+      "updatedAt": "25 mins ago"
+    },
+    {
+      "id": "risk-del-1",
+      "name": "Dhaula Kuan - Ring Road Merge",
+      "type": "Peak Hour Heavy Corridor",
+      "severity": "medium",
+      "lat": 28.592,
+      "lng": 77.161,
+      "radius": 450,
+      "city": "delhi",
+      "reason": "Heavy traffic moving towards Gurgaon and Airport during 6:00 PM - 9:00 PM.",
+      "recommendedPrecaution": "Delhi Metro Airport Express Line is 3x faster for CP to IGI Airport transit.",
+      "verifiedReportsCount": 47,
+      "updatedAt": "12 mins ago"
+    },
+    {
+      "id": "risk-jai-1",
+      "name": "Sanganeri Gate to Bapu Bazaar",
+      "type": "Narrow Heritage Bazaar Traffic",
+      "severity": "low",
+      "lat": 26.918,
+      "lng": 75.824,
+      "radius": 350,
+      "city": "jaipur",
+      "reason": "E-rickshaw and pedestrian density during evening shopping hours (5 PM - 9 PM).",
+      "recommendedPrecaution": "Opt for walking tours or registered e-rickshaws rather than private 4-wheelers.",
+      "verifiedReportsCount": 26,
+      "updatedAt": "1 hour ago"
     }
   ],
   "benchmarks": {
     "Deccan & FC Road": {
       "name": "Deccan & FC Road",
+      "city": "pune",
       "tagline": "Academic Heritage, Student Culture & Street Food Heaven",
       "safety": 94,
       "cleanliness": 86,
@@ -3200,6 +3315,7 @@
     },
     "Koregaon Park": {
       "name": "Koregaon Park",
+      "city": "pune",
       "tagline": "Lush Green Canopies, Zen Sanctuaries & Global Cafes",
       "safety": 93,
       "cleanliness": 94,
@@ -3222,6 +3338,7 @@
     },
     "Shivajinagar & JM Road": {
       "name": "Shivajinagar & JM Road",
+      "city": "pune",
       "tagline": "Transit Epicenter, Pav Bhaji Strip & Civic Heart",
       "safety": 91,
       "cleanliness": 84,
@@ -3244,6 +3361,7 @@
     },
     "Baner & Balewadi": {
       "name": "Baner & Balewadi",
+      "city": "pune",
       "tagline": "Modern IT Corridor, High Street & Rooftop Microbreweries",
       "safety": 92,
       "cleanliness": 91,
@@ -3266,6 +3384,7 @@
     },
     "Swargate & Camp": {
       "name": "Swargate & Camp",
+      "city": "pune",
       "tagline": "Colonial Bakeries, Sarasbaug Bhel & Wholesale Markets",
       "safety": 84,
       "cleanliness": 76,
@@ -3285,11 +3404,334 @@
       ],
       "crimeRate": "Moderate (1.6 / 1000 cap)",
       "transitScore": "Grade A (Swargate Bus Terminal, Underground Metro)"
+    },
+    "Colaba & Fort": {
+      "name": "Colaba & Fort",
+      "city": "mumbai",
+      "tagline": "Victorian Gothic Grandeur, Art District & Gateway of India",
+      "safety": 95,
+      "cleanliness": 88,
+      "affordability": 68,
+      "ratings": 98,
+      "accessibility": 94,
+      "overallScore": 92.4,
+      "summary": "Historic South Bombay precinct with round-the-clock tourist police, iconic heritage architecture, and sea promenades.",
+      "topPros": [
+        "Gateway of India & Taj Palace promenade",
+        "Kala Ghoda art galleries & cafes",
+        "24/7 high security"
+      ],
+      "topCons": [
+        "Causeway pavement crowding on weekends",
+        "Premium heritage hotel tariffs"
+      ],
+      "crimeRate": "Very Low (0.4 / 1000 cap)",
+      "transitScore": "Grade A+ (CSMT & Churchgate rail terminuses, BEST AC buses)"
+    },
+    "Bandra West": {
+      "name": "Bandra West",
+      "city": "mumbai",
+      "tagline": "Queen of Suburbs, Bandstand Sunset Promenade & Boutique Bistros",
+      "safety": 94,
+      "cleanliness": 90,
+      "affordability": 55,
+      "ratings": 97,
+      "accessibility": 92,
+      "overallScore": 89.6,
+      "summary": "Chic cosmopolitan coastal suburb with scenic pedestrian seaface walks, celebrity mansions, and lively nightlife.",
+      "topPros": [
+        "Bandstand & Carter Road seaside promenades",
+        "Artisanal bakeries & live music cafes",
+        "Excellent night safety"
+      ],
+      "topCons": [
+        "Pali Hill & Hill Road peak-hour parking crunch",
+        "Higher dining prices"
+      ],
+      "crimeRate": "Very Low (0.5 / 1000 cap)",
+      "transitScore": "Grade A (Bandra Station, Bandra-Worli Sea Link access)"
+    },
+    "Marine Drive & Nariman Point": {
+      "name": "Marine Drive & Nariman Point",
+      "city": "mumbai",
+      "tagline": "Queen's Necklace, Iconic Sea Breeze Promenade & Art Deco",
+      "safety": 98,
+      "cleanliness": 93,
+      "affordability": 58,
+      "ratings": 99,
+      "accessibility": 96,
+      "overallScore": 94.8,
+      "summary": "Mumbai's most celebrated 3.6-km coastal boulevard; 100% CCTV-monitored, ultra-safe night walking paradise.",
+      "topPros": [
+        "Continuous sea breeze & night illumination",
+        "World Heritage Art Deco buildings",
+        "Safe at 2 AM"
+      ],
+      "topCons": [
+        "Heavy traffic along roadway during rush hours",
+        "Limited budget street stalls directly on promenade"
+      ],
+      "crimeRate": "Extremely Low (0.2 / 1000 cap)",
+      "transitScore": "Grade A+ (Churchgate Station, Marine Lines, Marine Drive)"
+    },
+    "Juhu & Vile Parle": {
+      "name": "Juhu & Vile Parle",
+      "city": "mumbai",
+      "tagline": "Expansive Golden Sands, Prithvi Theatre & Street Chaat",
+      "safety": 90,
+      "cleanliness": 82,
+      "affordability": 70,
+      "ratings": 92,
+      "accessibility": 88,
+      "overallScore": 86.4,
+      "summary": "Famous beachfront suburb bustling with Bollywood energy, theatre culture, luxury hotels, and beach snacks.",
+      "topPros": [
+        "Prithvi Theatre Irish coffee & plays",
+        "Vibrant sunset beach atmosphere",
+        "Luxury resort dining"
+      ],
+      "topCons": [
+        "Weekend beach litter at main entry",
+        "Juhu Circle bottleneck"
+      ],
+      "crimeRate": "Low (0.8 / 1000 cap)",
+      "transitScore": "Grade B+ (Vile Parle Station, Mumbai Metro Line 2A)"
+    },
+    "Lower Parel & Worli": {
+      "name": "Lower Parel & Worli",
+      "city": "mumbai",
+      "tagline": "High Street Phoenix Mills, Corporate Towers & Rooftop Sky Bars",
+      "safety": 93,
+      "cleanliness": 92,
+      "affordability": 48,
+      "ratings": 95,
+      "accessibility": 91,
+      "overallScore": 87.8,
+      "summary": "Industrial mill district turned luxury commercial and nightlife capital with premier shopping malls.",
+      "topPros": [
+        "Palladium luxury shopping & Michelin-grade restaurants",
+        "Skyline views & microbreweries",
+        "Gated corporate safety"
+      ],
+      "topCons": [
+        "Senapati Bapat Marg flyover merging queues",
+        "High expense index"
+      ],
+      "crimeRate": "Low (0.6 / 1000 cap)",
+      "transitScore": "Grade A (Lower Parel & Currey Road Stations, Monorail)"
+    },
+    "Indiranagar & 100ft Road": {
+      "name": "Indiranagar & 100ft Road",
+      "city": "bengaluru",
+      "tagline": "Artisanal Coffee, Global Boutiques & Craft Breweries",
+      "safety": 93,
+      "cleanliness": 90,
+      "affordability": 62,
+      "ratings": 97,
+      "accessibility": 95,
+      "overallScore": 91.4,
+      "summary": "Bangalore's lifestyle crown jewel with tree-lined avenues, designer cafes, and vibrant safe night walking culture.",
+      "topPros": [
+        "100ft and 12th Main cafe culture",
+        "Namma Metro direct station access",
+        "Active neighborhood watch & safety"
+      ],
+      "topCons": [
+        "Weekend pub crawl noise on main streets",
+        "Higher dining tariffs"
+      ],
+      "crimeRate": "Very Low (0.6 / 1000 cap)",
+      "transitScore": "Grade A+ (Indiranagar Metro Station - Purple Line)"
+    },
+    "Koramangala": {
+      "name": "Koramangala",
+      "city": "bengaluru",
+      "tagline": "Startup Nerve Center, Street Gastronomy & Youth Vibe",
+      "safety": 91,
+      "cleanliness": 86,
+      "affordability": 74,
+      "ratings": 95,
+      "accessibility": 90,
+      "overallScore": 89.2,
+      "summary": "Energetic residential and tech hub packed with co-working spaces, bookstores, gaming cafes, and budget food.",
+      "topPros": [
+        "Endless variety of global and regional cuisines",
+        "Young vibrant crowd",
+        "Safe well-lit block lanes"
+      ],
+      "topCons": [
+        "Sony World signal evening congestion",
+        "Limited direct metro connectivity"
+      ],
+      "crimeRate": "Low (0.8 / 1000 cap)",
+      "transitScore": "Grade B+ (BMTC Volvo bus network, app autos & cabs)"
+    },
+    "MG Road & Church Street": {
+      "name": "MG Road & Church Street",
+      "city": "bengaluru",
+      "tagline": "Cobblestone Pedestrian Walk, Secondhand Bookstores & Pubs",
+      "safety": 95,
+      "cleanliness": 92,
+      "affordability": 70,
+      "ratings": 98,
+      "accessibility": 98,
+      "overallScore": 94.6,
+      "summary": "Cobblestone pedestrianized cultural street in central Bangalore; buzzing with street artists, iconic bookstores, and pubs.",
+      "topPros": [
+        "Pedestrian-first Church Street design",
+        "Blossom Book House & Higginbothams",
+        "Metro direct exit"
+      ],
+      "topCons": [
+        "Heavy weekend street crowds",
+        "Strict vehicle parking restrictions"
+      ],
+      "crimeRate": "Very Low (0.4 / 1000 cap)",
+      "transitScore": "Grade A+ (MG Road & Trinity Metro Interchange)"
+    },
+    "Whitefield & ITPL": {
+      "name": "Whitefield & ITPL",
+      "city": "bengaluru",
+      "tagline": "Tech Mega-Parks, Modern Malls & Expat Communities",
+      "safety": 92,
+      "cleanliness": 90,
+      "affordability": 65,
+      "ratings": 90,
+      "accessibility": 88,
+      "overallScore": 87.0,
+      "summary": "Sprawling eastern technology suburb with modern gated communities, international schools, and metro connectivity.",
+      "topPros": [
+        "Purple Line Metro expansion to Kadugodi",
+        "Nexus Shantiniketan & VR Mall",
+        "Safe residential layouts"
+      ],
+      "topCons": [
+        "Distance from Kempegowda Central station",
+        "Hoodi junction rush"
+      ],
+      "crimeRate": "Low (0.7 / 1000 cap)",
+      "transitScore": "Grade A- (Namma Metro Purple Line terminal extension)"
+    },
+    "HSR Layout": {
+      "name": "HSR Layout",
+      "city": "bengaluru",
+      "tagline": "Planned Grid Layout, Parks, Gyms & Healthy Cafes",
+      "safety": 92,
+      "cleanliness": 89,
+      "affordability": 76,
+      "ratings": 93,
+      "accessibility": 89,
+      "overallScore": 89.8,
+      "summary": "Modern planned residential suburb with wide numbered sectors, lush parks, and thriving fitness and food hub.",
+      "topPros": [
+        "Wide grid layout with clean footpaths",
+        "Abundant green parks & lakes",
+        "Close to Outer Ring Road IT firms"
+      ],
+      "topCons": [
+        "Silk Board junction transit bottleneck",
+        "Morning peak school traffic"
+      ],
+      "crimeRate": "Low (0.7 / 1000 cap)",
+      "transitScore": "Grade B+ (Outer Ring Road connectivity, Yellow Line Metro route)"
+    },
+    "Connaught Place (CP)": {
+      "name": "Connaught Place (CP)",
+      "city": "delhi",
+      "tagline": "Colonial Georgian Colonnades, Central Park & Heritage Dining",
+      "safety": 94,
+      "cleanliness": 91,
+      "affordability": 72,
+      "ratings": 97,
+      "accessibility": 99,
+      "overallScore": 94.6,
+      "summary": "Iconic circular heart of Delhi with premier flagship stores, underground Palika Bazaar, and central metro interchange.",
+      "topPros": [
+        "Rajiv Chowk Metro hub (Yellow & Blue lines)",
+        "Spacious pedestrian colonnade walkways",
+        "High police presence"
+      ],
+      "topCons": [
+        "Outer circle vehicle traffic",
+        "Touts near Palika Bazaar entrances"
+      ],
+      "crimeRate": "Very Low (0.5 / 1000 cap)",
+      "transitScore": "Grade A+ (Rajiv Chowk Interchange Terminal)"
+    },
+    "Hauz Khas Village": {
+      "name": "Hauz Khas Village",
+      "city": "delhi",
+      "tagline": "14th-Century Fort Lake, Bohemian Cafes & Indie Boutiques",
+      "safety": 90,
+      "cleanliness": 86,
+      "affordability": 64,
+      "ratings": 94,
+      "accessibility": 88,
+      "overallScore": 88.4,
+      "summary": "Eclectic blend of medieval Delhi Sultanate ruins, scenic lake, and trendy rooftop cocktail bars.",
+      "topPros": [
+        "Scenic medieval reservoir & madrasa sunset view",
+        "Artisanal design studios",
+        "Lively weekend energy"
+      ],
+      "topCons": [
+        "Narrow pedestrian lanes during peak hours",
+        "Limited 4-wheeler entry"
+      ],
+      "crimeRate": "Low (0.8 / 1000 cap)",
+      "transitScore": "Grade A- (IIT Delhi & Hauz Khas Metro Station - Magenta/Yellow Line)"
+    },
+    "C-Scheme & Civil Lines": {
+      "name": "C-Scheme & Civil Lines",
+      "city": "jaipur",
+      "tagline": "Royal Avenue Canopies, Artisanal Cafes & High Security",
+      "safety": 96,
+      "cleanliness": 93,
+      "affordability": 75,
+      "ratings": 96,
+      "accessibility": 94,
+      "overallScore": 92.8,
+      "summary": "Jaipur's most refined central neighbourhood with heritage bungalows, high security, and gourmet restaurants.",
+      "topPros": [
+        "Lush tree-canopied walking boulevards",
+        "Premier craft coffee & Rajasthani dining",
+        "Very safe night strolls"
+      ],
+      "topCons": [
+        "Higher dining price points than Old City",
+        "Fewer street markets"
+      ],
+      "crimeRate": "Very Low (0.3 / 1000 cap)",
+      "transitScore": "Grade A (Civil Lines Metro Station, MI Road proximity)"
+    },
+    "Johari & Bapu Bazaar": {
+      "name": "Johari & Bapu Bazaar",
+      "city": "jaipur",
+      "tagline": "Pink City Heritage Terracotta Facades, Gems & Textiles",
+      "safety": 91,
+      "cleanliness": 80,
+      "affordability": 92,
+      "ratings": 95,
+      "accessibility": 92,
+      "overallScore": 90.0,
+      "summary": "The beating heart of Jaipur's UNESCO World Heritage walled city; famous for gemstones, mojris, and bandhani.",
+      "topPros": [
+        "Authentic UNESCO pink terracotta architecture",
+        "Unmatched textile and jewelry shopping",
+        "LMB classic food"
+      ],
+      "topCons": [
+        "Dense footfall & cycle-rickshaw bottlenecks",
+        "E-rickshaw negotiation required"
+      ],
+      "crimeRate": "Low (0.9 / 1000 cap)",
+      "transitScore": "Grade A (Badi Chaupar Underground Metro Station)"
     }
   },
   "citizenReports": [
     {
-      "id": "rep-101",
+      "id": "rep-pune-1",
+      "city": "pune",
       "category": "food_vibe",
       "hazardLevel": "Low",
       "title": "Fresh Shrewsbury Biscuits Batch & Acoustic Music",
@@ -3304,7 +3746,8 @@
       "timeAgo": "15m ago"
     },
     {
-      "id": "rep-102",
+      "id": "rep-pune-2",
+      "city": "pune",
       "category": "traffic",
       "hazardLevel": "High",
       "title": "Metro Barricade & Diversion on Ganeshkhind Rd",
@@ -3320,37 +3763,156 @@
       "timeAgo": "30m ago"
     },
     {
-      "id": "rep-103",
+      "id": "rep-mum-1",
+      "city": "mumbai",
       "category": "safety",
-      "hazardLevel": "Medium",
-      "title": "Pavement Tree Pruning & Dim Light on Lane 3",
-      "description": "Municipal pruning branches on sidewalk. Use phone flashlights or walk on opposite cafe side.",
-      "lat": 18.5365,
-      "lng": 73.893,
-      "neighborhood": "Koregaon Park",
-      "author": "Tanmay S.",
-      "mediaType": "voice_note",
-      "audioDuration": "0:16",
-      "upvotes": 28,
+      "hazardLevel": "Low",
+      "title": "Active Police Van & Safe Night Walk on Bandstand",
+      "description": "Marine police patrol van stationed near Mannat / Bandstand. Excellent lighting, joggers active till 1 AM.",
+      "lat": 19.0435,
+      "lng": 72.8195,
+      "neighborhood": "Bandra West",
+      "author": "Aakash M.",
+      "mediaType": "text",
+      "upvotes": 68,
       "verified": true,
-      "timeAgo": "50m ago"
+      "timeAgo": "10m ago"
+    },
+    {
+      "id": "rep-mum-2",
+      "city": "mumbai",
+      "category": "food_vibe",
+      "hazardLevel": "Low",
+      "title": "Late Night Irani Chai & Bun Maska at Kyani & Co.",
+      "description": "Historic atmosphere with fresh warm mawa cake batches. Fast service, clean seating.",
+      "lat": 18.943,
+      "lng": 72.8285,
+      "neighborhood": "Colaba & Fort",
+      "author": "Zoya K.",
+      "mediaType": "photo",
+      "imageUrl": "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=600&q=80",
+      "upvotes": 49,
+      "verified": true,
+      "timeAgo": "45m ago"
+    },
+    {
+      "id": "rep-blr-1",
+      "city": "bengaluru",
+      "category": "safety",
+      "hazardLevel": "Low",
+      "title": "Church Street Pedestrian Walk & Live Music Buskers",
+      "description": "Clean cobblestone street with well-lit footpaths, family crowd and active security marshals.",
+      "lat": 12.974,
+      "lng": 77.6065,
+      "neighborhood": "MG Road & Church Street",
+      "author": "Deepak R.",
+      "mediaType": "text",
+      "upvotes": 77,
+      "verified": true,
+      "timeAgo": "20m ago"
+    },
+    {
+      "id": "rep-blr-2",
+      "city": "bengaluru",
+      "category": "traffic",
+      "hazardLevel": "Medium",
+      "title": "Outer Ring Road Slow Movement near Marathahalli",
+      "description": "Slow transit due to bus lane barricades. Use HAL Old Airport Road as an alternate route.",
+      "lat": 12.956,
+      "lng": 77.701,
+      "neighborhood": "Whitefield & ITPL",
+      "author": "Karthik V.",
+      "mediaType": "text",
+      "upvotes": 34,
+      "verified": true,
+      "timeAgo": "1h ago"
     }
   ],
   "liveConditions": {
-    "weather": {
-      "city": "Pune City",
-      "tempC": 26,
-      "condition": "Pleasant Hill Breeze & Clear Sky",
-      "humidity": "54%",
-      "airQualityIndex": 62,
-      "airQualityStatus": "Good",
-      "monsoonRisk": "Low / Dry Roads",
-      "sunset": "6:32 PM"
+    "pune": {
+      "weather": {
+        "city": "Pune City",
+        "tempC": 26,
+        "condition": "Pleasant Hill Breeze & Clear Sky",
+        "humidity": "54%",
+        "airQualityIndex": 62,
+        "airQualityStatus": "Good",
+        "monsoonRisk": "Low / Dry Roads",
+        "sunset": "6:32 PM"
+      },
+      "trafficIndex": {
+        "overallCityCongestion": "32% (Smooth)",
+        "peakCorridor": "Ganeshkhind Road / University Circle",
+        "transitTip": "Pune Metro Aqua Line & Purple Line recommended for Deccan to Civil Court transit."
+      }
     },
-    "trafficIndex": {
-      "overallCityCongestion": "32% (Smooth)",
-      "peakCorridor": "Ganeshkhind Road / University Circle",
-      "transitTip": "Pune Metro Aqua Line & Purple Line recommended for Deccan to Civil Court transit."
+    "mumbai": {
+      "weather": {
+        "city": "Mumbai Metro",
+        "tempC": 29,
+        "condition": "Gentle Arabian Sea Breeze",
+        "humidity": "68%",
+        "airQualityIndex": 82,
+        "airQualityStatus": "Moderate",
+        "monsoonRisk": "Low Tide / Dry Roads",
+        "sunset": "6:40 PM"
+      },
+      "trafficIndex": {
+        "overallCityCongestion": "48% (Heavy)",
+        "peakCorridor": "Western Express Highway & Sakinaka",
+        "transitTip": "Mumbai Metro Line 1 & Line 2A recommended for avoiding road jams."
+      }
+    },
+    "bengaluru": {
+      "weather": {
+        "city": "Bengaluru",
+        "tempC": 24,
+        "condition": "Crisp Garden Breeze & Partly Cloudy",
+        "humidity": "58%",
+        "airQualityIndex": 55,
+        "airQualityStatus": "Good",
+        "monsoonRisk": "None / Clear Roads",
+        "sunset": "6:25 PM"
+      },
+      "trafficIndex": {
+        "overallCityCongestion": "42% (Moderate)",
+        "peakCorridor": "Silk Board Junction & ORR",
+        "transitTip": "Namma Metro Purple Line is 4x faster from MG Road to Whitefield."
+      }
+    },
+    "delhi": {
+      "weather": {
+        "city": "Delhi NCR",
+        "tempC": 28,
+        "condition": "Warm Sun & Clear Sky",
+        "humidity": "45%",
+        "airQualityIndex": 135,
+        "airQualityStatus": "Caution",
+        "monsoonRisk": "Dry / Hot Roads",
+        "sunset": "6:15 PM"
+      },
+      "trafficIndex": {
+        "overallCityCongestion": "52% (Heavy)",
+        "peakCorridor": "Ring Road & Dhaula Kuan",
+        "transitTip": "Delhi Metro Yellow/Blue lines recommended for rapid transit."
+      }
+    },
+    "jaipur": {
+      "weather": {
+        "city": "Jaipur (Pink City)",
+        "tempC": 30,
+        "condition": "Warm Desert Sun & Gentle Wind",
+        "humidity": "38%",
+        "airQualityIndex": 78,
+        "airQualityStatus": "Moderate",
+        "monsoonRisk": "Dry / Clear Roads",
+        "sunset": "6:28 PM"
+      },
+      "trafficIndex": {
+        "overallCityCongestion": "28% (Smooth)",
+        "peakCorridor": "Sanganeri Gate / Bapu Bazaar",
+        "transitTip": "Jaipur Metro Pink Line recommended for Mansarovar to Chandpole transit."
+      }
     }
   }
 }

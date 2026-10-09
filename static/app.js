@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupBenchmarkDropdowns();
   runBenchmarkComparison();
   renderReportsFeed();
+  updateReportNeighborhoodOptions();
   startSensorTicker();
 });
 
@@ -145,14 +146,21 @@ async function loadInitialData() {
   }
 }
 
-// Render POI Sidebar with real images, null-safety and defensive defaults
+// Render POI Sidebar with rich place cards, clean typography and null-safety
 function renderPoiList(items) {
   const container = document.getElementById('poiListContainer');
   if (!container) return;
   container.innerHTML = '';
 
   if (!items || items.length === 0) {
-    container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2rem;">No locations found for this filter.</div>`;
+    const cityName = selectedCity === 'all' ? 'All Cities' : selectedCity.toUpperCase();
+    container.innerHTML = `
+      <div style="text-align: center; color: var(--text-muted); padding: 3rem 1.5rem; background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px dashed var(--border-glass); margin: 0.5rem 0;">
+        <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">📍</div>
+        <strong style="color: var(--text-primary); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">No locations found</strong>
+        <span style="font-size: 0.82rem; line-height: 1.4;">No ${selectedCategory !== 'all' ? selectedCategory : ''} places found in ${cityName}. Try selecting a different category or city.</span>
+      </div>
+    `;
     return;
   }
 
@@ -168,31 +176,78 @@ function renderPoiList(items) {
     const rating = poi.rating !== undefined && poi.rating !== null ? poi.rating : '4.5';
     const safetyScore = poi.safetyScore !== undefined && poi.safetyScore !== null ? poi.safetyScore : '4.5';
     const cleanlinessScore = poi.cleanlinessScore !== undefined && poi.cleanlinessScore !== null ? poi.cleanlinessScore : '4.2';
-    const description = poi.description || 'Verified urban exploration destination with safety assessment.';
     const neighborhood = poi.neighborhood || 'City Center';
+    const priceLevel = poi.priceLevel || 'Budget-Friendly';
+    const description = poi.description || 'Verified exploration hotspot with comprehensive safety metrics.';
     const imageUrl = poi.imageUrl || 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=600&q=80';
+    const vibeScore = Math.round(((safetyScore * 0.4) + (cleanlinessScore * 0.3) + (rating * 0.3)) * 20);
+
+    // Safety Indicator Status
+    const isVerySafe = safetyScore >= 4.4;
+    const safetyIndicatorText = isVerySafe ? '🛡️ Safe Zone' : '⚠️ Verified Caution';
+    const safetyIndicatorClass = isVerySafe ? 'indicator-safe' : 'indicator-caution';
 
     card.innerHTML = `
       <div class="poi-card-img-wrap">
         <img src="${imageUrl}" alt="${name}" class="poi-card-img" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=600&q=80'">
-        <span class="badge ${badgeClass} poi-card-overlay-badge">${category}</span>
-        <div class="poi-card-overlay-rating">★ ${rating}</div>
+        <div class="poi-card-gradient-overlay"></div>
+        <div class="poi-card-top-tags">
+          <span class="badge ${badgeClass} poi-card-overlay-badge">${category}</span>
+          <div class="poi-card-overlay-rating">⭐ ${rating}</div>
+        </div>
+        <div class="poi-card-img-bottom-bar">
+          <span class="poi-vibe-pill">✨ Vibe ${vibeScore}%</span>
+          <span class="poi-safety-indicator ${safetyIndicatorClass}">${safetyIndicatorText}</span>
+        </div>
       </div>
       <div class="poi-card-body">
-        <div class="poi-title">${name}</div>
-        <div class="poi-neighborhood-tag">📍 ${neighborhood}</div>
-        <div class="poi-scores">
-          <span class="score-badge">🛡️ Safety: <strong style="color: var(--accent-emerald)">${safetyScore}/5</strong></span>
-          <span class="score-badge">🧹 Clean: <strong>${cleanlinessScore}/5</strong></span>
+        <div class="poi-header-row">
+          <h3 class="poi-title">${name}</h3>
+        </div>
+        <div class="poi-neighborhood-tag">
+          <span class="loc-pin">📍</span> <span>${neighborhood}</span> • <span class="poi-price-tag">${priceLevel}</span>
+        </div>
+        <div class="poi-info-highlight" style="font-size: 0.82rem; color: var(--accent-cyan); display: flex; align-items: center; gap: 0.35rem; margin-top: 0.1rem; font-weight: 600;">
+          <span>🕒 Best: ${poi.bestTimeToVisit || '10:00 AM - 8:00 PM'}</span>
+          <span style="color: var(--text-muted);">•</span>
+          <span style="color: var(--text-secondary);">${poi.type || 'Urban Hotspot'}</span>
         </div>
         <p class="poi-desc">${description}</p>
+        <div class="poi-scores-row">
+          <div class="mini-score-box">
+            <span class="mini-label">Safety</span>
+            <span class="mini-val text-emerald">${safetyScore}/5</span>
+          </div>
+          <div class="mini-score-box">
+            <span class="mini-label">Cleanliness</span>
+            <span class="mini-val text-cyan">${cleanlinessScore}/5</span>
+          </div>
+          <div class="mini-score-box">
+            <span class="mini-label">Rating</span>
+            <span class="mini-val text-amber">★ ${rating}</span>
+          </div>
+        </div>
+        <div class="poi-card-actions">
+          <button class="btn-card-details" onclick="event.stopPropagation(); openPoiModalById('${poi.id}')">Details</button>
+          <button class="btn-card-route" onclick="event.stopPropagation(); routeToPoi('${poi.id}')">🛡️ Safe Route</button>
+        </div>
       </div>
     `;
     container.appendChild(card);
   });
 }
 
-// Render Map Markers (POIs, Hazards, Citizen Alerts)
+// Quick Route from Card Action
+function routeToPoi(poiId) {
+  switchTab('tab-route');
+  const destSelect = document.getElementById('routeDestination');
+  if (destSelect) {
+    destSelect.value = poiId;
+    calculateRoutePlan();
+  }
+}
+
+// Render Map Markers (POIs, Hazards, Citizen Alerts) - strictly filtered by selectedCity
 function renderMapMarkers() {
   poiLayerGroup.clearLayers();
   hazardLayerGroup.clearLayers();
@@ -211,29 +266,34 @@ function renderMapMarkers() {
 
     const customIcon = L.divIcon({
       className: 'custom-poi-marker',
-      html: `<div style="background: ${iconColor}; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; box-shadow: 0 0 10px rgba(0,0,0,0.5);">📍</div>`,
+      html: `<div style="background: ${iconColor}; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; box-shadow: 0 0 10px rgba(0,0,0,0.5); font-size: 14px;">📍</div>`,
       iconSize: [28, 28],
       iconAnchor: [14, 14]
     });
 
     const marker = L.marker([poi.lat, poi.lng], { icon: customIcon }).addTo(poiLayerGroup);
     marker.bindPopup(`
-      <div style="color: #111; font-family: sans-serif; font-size: 0.85rem;">
-        <strong style="font-size: 0.95rem;">${poi.name}</strong><br>
-        <span style="color: #666;">${poi.type} • ${poi.neighborhood}</span><br>
-        <div style="margin-top: 0.4rem; display: flex; gap: 0.5rem;">
-          <span>🛡️ Safety: <b>${poi.safetyScore}/5</b></span>
-          <span>★ <b>${poi.rating}</b></span>
+      <div style="color: #111; font-family: sans-serif; font-size: 0.85rem; min-width: 200px;">
+        <strong style="font-size: 0.95rem; color: #0f172a;">${poi.name}</strong><br>
+        <span style="color: #64748b; font-size: 0.78rem;">${poi.type || 'Hotspot'} • ${poi.neighborhood}</span><br>
+        <div style="margin-top: 0.4rem; display: flex; gap: 0.6rem; font-size: 0.8rem;">
+          <span>🛡️ Safety: <b style="color: #059669;">${poi.safetyScore}/5</b></span>
+          <span>★ <b style="color: #d97706;">${poi.rating}</b></span>
         </div>
-        <button style="margin-top: 0.5rem; background: #06b6d4; color: #fff; border: none; padding: 0.3rem 0.6rem; border-radius: 4px; cursor: pointer;" onclick="openPoiModalById('${poi.id}')">View Details & History</button>
+        <div style="margin-top: 0.5rem; display: flex; gap: 0.35rem;">
+          <button style="flex: 1; background: #0284c7; color: #fff; border: none; padding: 0.35rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer;" onclick="openPoiModalById('${poi.id}')">View Details</button>
+          <button style="flex: 1; background: #059669; color: #fff; border: none; padding: 0.35rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer;" onclick="routeToPoi('${poi.id}')">Route</button>
+        </div>
       </div>
     `);
     marker.on('click', () => selectPoi(poi));
   });
 
-  // 2. Safety Hazard Zones (Red/Orange Polygons & Circles)
+  // 2. Safety Hazard Zones (Red/Orange Circles) - Filtered to selected city
   safetyZones.forEach(zone => {
-    const circleColor = zone.severity === 'high' ? '#f43f5e' : '#f59e0b';
+    if (selectedCity !== 'all' && (zone.city || 'pune').toLowerCase() !== selectedCity.toLowerCase()) return;
+
+    const circleColor = zone.severity === 'high' ? '#f43f5e' : zone.severity === 'medium' ? '#f59e0b' : '#3b82f6';
     const circle = L.circle([zone.lat, zone.lng], {
       color: circleColor,
       fillColor: circleColor,
@@ -242,31 +302,33 @@ function renderMapMarkers() {
     }).addTo(hazardLayerGroup);
 
     circle.bindPopup(`
-      <div style="color: #111; font-family: sans-serif; font-size: 0.85rem;">
-        <span style="background: #f43f5e; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">${zone.type.toUpperCase()}</span>
-        <h4 style="margin: 4px 0;">${zone.name}</h4>
-        <p style="color: #444; margin: 4px 0;">${zone.reason}</p>
-        <small style="color: #d97706;"><b>Precaution:</b> ${zone.recommendedPrecaution}</small>
+      <div style="color: #111; font-family: sans-serif; font-size: 0.85rem; max-width: 240px;">
+        <span style="background: ${circleColor}; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">${(zone.type || 'HAZARD').toUpperCase()}</span>
+        <h4 style="margin: 6px 0 3px 0; color: #0f172a;">${zone.name}</h4>
+        <p style="color: #475569; margin: 3px 0; font-size: 0.8rem;">${zone.reason}</p>
+        <small style="color: #d97706; display: block; margin-top: 4px;"><b>Precaution:</b> ${zone.recommendedPrecaution}</small>
       </div>
     `);
   });
 
-  // 3. Citizen Live Alerts Markers
+  // 3. Citizen Live Alerts Markers - Filtered to selected city
   citizenReports.forEach(rep => {
     if (!rep.lat || !rep.lng) return;
+    if (selectedCity !== 'all' && (rep.city || 'pune').toLowerCase() !== selectedCity.toLowerCase()) return;
+
     const repIcon = L.divIcon({
       className: 'custom-rep-marker',
-      html: `<div style="background: #e11d48; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 11px; border: 2px solid #fff;">!</div>`,
-      iconSize: [22, 22],
-      iconAnchor: [11, 11]
+      html: `<div style="background: #e11d48; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; font-weight: 800; border: 2px solid #fff; box-shadow: 0 0 8px rgba(225,29,72,0.6);">!</div>`,
+      iconSize: [24, 24],
+      iconAnchor: [12, 12]
     });
     const repMarker = L.marker([rep.lat, rep.lng], { icon: repIcon }).addTo(reportsLayerGroup);
     repMarker.bindPopup(`
-      <div style="color: #111; font-family: sans-serif; font-size: 0.85rem;">
+      <div style="color: #111; font-family: sans-serif; font-size: 0.85rem; max-width: 220px;">
         <strong style="color: #e11d48;">📢 Verified Citizen Report</strong>
-        <div style="font-weight: 600; margin-top: 2px;">${rep.title}</div>
-        <p style="color: #555; margin: 3px 0;">${rep.description}</p>
-        <small style="color: #888;">Reported by ${rep.author} (${rep.timeAgo})</small>
+        <div style="font-weight: 700; color: #0f172a; margin-top: 3px;">${rep.title}</div>
+        <p style="color: #475569; margin: 3px 0; font-size: 0.8rem;">${rep.description}</p>
+        <small style="color: #64748b;">Reported by ${rep.author} (${rep.timeAgo})</small>
       </div>
     `);
   });
@@ -287,28 +349,35 @@ function selectPoi(poi) {
   }
 }
 
-// Global State
+// Global Selected City State (Default: Pune)
 let selectedCity = 'pune';
 
-// Change City Filter & Pan Map
+// Change City Filter & Smoothly Update All Views (Map, Places, Routing, Benchmarks, Reports)
 function changeCityFilter(city) {
   selectedCity = city;
   
-  // Dynamic Map Views for Major Indian Metros or All India
+  // Ensure dropdown selection matches
+  const citySelect = document.getElementById('citySelector');
+  if (citySelect && citySelect.value !== city) {
+    citySelect.value = city;
+  }
+
+  // Dynamic City Centers, Zooms, and Live Conditions
   const cityCenters = {
-    'all': { coords: [21.5937, 78.9629], zoom: 5, temp: '27°C', aqi: '68 (Moderate)', traffic: '36% Normal' },
-    'pune': { coords: [18.5204, 73.8567], zoom: 13, temp: '26°C', aqi: '62 (Good)', traffic: '32% Smooth' },
-    'mumbai': { coords: [19.0760, 72.8777], zoom: 12, temp: '29°C', aqi: '82 (Moderate)', traffic: '48% Heavy' },
-    'delhi': { coords: [28.6139, 77.2090], zoom: 12, temp: '28°C', aqi: '135 (Caution)', traffic: '52% Heavy' },
-    'bengaluru': { coords: [12.9716, 77.5946], zoom: 12, temp: '24°C', aqi: '55 (Good)', traffic: '42% Moderate' },
-    'jaipur': { coords: [26.9124, 75.7873], zoom: 12, temp: '30°C', aqi: '78 (Moderate)', traffic: '28% Smooth' }
+    'all': { coords: [20.5937, 78.9629], zoom: 5, temp: '27°C', aqi: '68 (Moderate)', traffic: '36% Normal', name: 'All India' },
+    'pune': { coords: [18.5204, 73.8567], zoom: 13, temp: '26°C', aqi: '62 (Good)', traffic: '32% Smooth', name: 'Pune City' },
+    'mumbai': { coords: [18.9600, 72.8300], zoom: 12, temp: '29°C', aqi: '82 (Moderate)', traffic: '48% Heavy', name: 'Mumbai Metro' },
+    'delhi': { coords: [28.6139, 77.2090], zoom: 12, temp: '28°C', aqi: '135 (Caution)', traffic: '52% Heavy', name: 'Delhi NCR' },
+    'bengaluru': { coords: [12.9716, 77.5946], zoom: 12, temp: '24°C', aqi: '55 (Good)', traffic: '42% Moderate', name: 'Bengaluru' },
+    'jaipur': { coords: [26.9124, 75.7873], zoom: 12, temp: '30°C', aqi: '78 (Moderate)', traffic: '28% Smooth', name: 'Jaipur (Pink City)' }
   };
 
   const target = cityCenters[city] || cityCenters['pune'];
   if (map) {
-    map.flyTo(target.coords, target.zoom, { duration: 1.5 });
+    map.flyTo(target.coords, target.zoom, { duration: 1.2 });
   }
 
+  // 1. Update Sensor Bar
   const tempEl = document.getElementById('sensorTemp');
   const aqiEl = document.getElementById('sensorAqi');
   const trafficEl = document.getElementById('sensorTraffic');
@@ -316,8 +385,18 @@ function changeCityFilter(city) {
   if (aqiEl) aqiEl.innerText = target.aqi;
   if (trafficEl) trafficEl.innerText = target.traffic;
 
-  // Filter POIs according to city & category
+  // 2. Filter POIs & Update Left Sidebar Places & Map Markers
   applyCombinedFilters();
+
+  // 3. Update Safe Routing Landmarks Dropdowns for this City
+  setupRouteDropdowns();
+
+  // 4. Update Best vs Worst Comparison Dropdowns for this City
+  setupBenchmarkDropdowns();
+
+  // 5. Update Citizen Reports Feed & Report Form Neighborhoods
+  renderReportsFeed();
+  updateReportNeighborhoodOptions();
 }
 
 function applyCombinedFilters() {
@@ -442,16 +521,22 @@ function setupRouteDropdowns() {
   originSelect.innerHTML = '';
   destSelect.innerHTML = '';
 
-  pois.forEach((p, idx) => {
+  const cityPois = selectedCity === 'all' 
+    ? pois 
+    : pois.filter(p => (p.city || 'pune').toLowerCase() === selectedCity.toLowerCase());
+
+  const listToUse = cityPois.length > 0 ? cityPois : pois;
+
+  listToUse.forEach((p) => {
     const optA = new Option(`${p.name} (${p.neighborhood})`, p.id);
     const optB = new Option(`${p.name} (${p.neighborhood})`, p.id);
     originSelect.add(optA);
     destSelect.add(optB);
   });
 
-  if (pois.length > 3) {
-    originSelect.selectedIndex = 0; // Shaniwar Wada
-    destSelect.selectedIndex = 1; // Aga Khan Palace
+  if (listToUse.length > 1) {
+    originSelect.selectedIndex = 0;
+    destSelect.selectedIndex = 1;
   }
 }
 
@@ -526,12 +611,12 @@ function renderRouteResults(data) {
         </div>
       </div>
 
-      <ul style="font-size: 0.8rem; color: var(--text-secondary); margin-left: 1.25rem; line-height: 1.5; margin-bottom: 1rem;">
-        ${safestRoute.alerts.map(a => `<li>✅ ${a}</li>`).join('')}
-      </ul>
+      <div style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.45; margin-bottom: 0.9rem; display: flex; flex-direction: column; gap: 0.25rem;">
+        ${safestRoute.alerts.slice(0, 2).map(a => `<div style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">✅ ${a}</div>`).join('')}
+      </div>
 
-      <button class="btn-primary" style="background: var(--gradient-safe); padding: 0.65rem 1rem; font-size: 0.85rem; width: 100%;" onclick="event.stopPropagation(); openInGoogleMaps([${oLat}, ${oLng}], [${dLat}, ${dLng}])">
-        <span>🗺️ Open Directions in Google Maps</span>
+      <button class="btn-primary" style="background: var(--gradient-safe); padding: 0.65rem 1rem; font-size: 0.85rem; width: 100%; border-radius: var(--radius-sm);" onclick="event.stopPropagation(); openInGoogleMaps([${oLat}, ${oLng}], [${dLat}, ${dLng}])">
+        <span>🗺️ Open in Google Maps</span>
       </button>
     </div>
 
@@ -540,12 +625,12 @@ function renderRouteResults(data) {
       <div class="route-card-header">
         <div>
           <span class="badge badge-food">⚡ ${fastestRoute.badge}</span>
-          <h3 style="margin-top: 0.35rem; font-size: 1.15rem; color: var(--accent-amber);">${fastestRoute.name}</h3>
-          <span style="font-size: 0.8rem; color: var(--text-secondary);">${origin} ➔ ${destination}</span>
+          <h3 style="margin-top: 0.35rem; font-size: 1.1rem; color: var(--accent-amber);">${fastestRoute.name}</h3>
+          <span style="font-size: 0.78rem; color: var(--text-secondary);">${origin} ➔ ${destination}</span>
         </div>
         <div style="text-align: right;">
-          <span style="font-size: 1.3rem; font-weight: 800; color: var(--accent-amber);">${fastestRoute.durationMins} mins</span>
-          <div style="font-size: 0.75rem; color: var(--text-muted);">${fastestRoute.distanceKm} km</div>
+          <span style="font-size: 1.25rem; font-weight: 800; color: var(--accent-amber);">${fastestRoute.durationMins} mins</span>
+          <div style="font-size: 0.72rem; color: var(--text-muted);">${fastestRoute.distanceKm} km</div>
         </div>
       </div>
 
@@ -564,12 +649,12 @@ function renderRouteResults(data) {
         </div>
       </div>
 
-      <ul style="font-size: 0.8rem; color: var(--text-secondary); margin-left: 1.25rem; line-height: 1.5; margin-bottom: 1rem;">
-        ${fastestRoute.alerts.map(a => `<li>⚠️ ${a}</li>`).join('')}
-      </ul>
+      <div style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.45; margin-bottom: 0.9rem; display: flex; flex-direction: column; gap: 0.25rem;">
+        ${fastestRoute.alerts.slice(0, 2).map(a => `<div style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">⚠️ ${a}</div>`).join('')}
+      </div>
 
-      <button class="btn-primary" style="background: rgba(255,255,255,0.1); border: 1px solid var(--border-glass); padding: 0.65rem 1rem; font-size: 0.85rem; width: 100%;" onclick="event.stopPropagation(); openInGoogleMaps([${oLat}, ${oLng}], [${dLat}, ${dLng}])">
-        <span>🗺️ Open Directions in Google Maps</span>
+      <button class="btn-primary" style="background: rgba(255,255,255,0.08); border: 1px solid var(--border-glass); padding: 0.65rem 1rem; font-size: 0.85rem; width: 100%; border-radius: var(--radius-sm);" onclick="event.stopPropagation(); openInGoogleMaps([${oLat}, ${oLng}], [${dLat}, ${dLng}])">
+        <span>🗺️ Open in Google Maps</span>
       </button>
     </div>
   `;
@@ -638,16 +723,26 @@ function setupBenchmarkDropdowns() {
   selA.innerHTML = '';
   selB.innerHTML = '';
 
-  const areas = Object.keys(benchmarkData);
-  areas.forEach(a => {
+  const allKeys = Object.keys(benchmarkData);
+  const cityKeys = selectedCity === 'all'
+    ? allKeys
+    : allKeys.filter(k => (benchmarkData[k].city || 'pune').toLowerCase() === selectedCity.toLowerCase());
+
+  const keysToUse = cityKeys.length > 0 ? cityKeys : allKeys;
+
+  keysToUse.forEach(a => {
     selA.add(new Option(a, a));
     selB.add(new Option(a, a));
   });
 
-  if (areas.length > 1) {
-    selA.selectedIndex = 0; // Colaba & Fort
-    selB.selectedIndex = 1; // Bandra West
+  if (keysToUse.length > 1) {
+    selA.selectedIndex = 0;
+    selB.selectedIndex = 1;
+  } else if (keysToUse.length === 1) {
+    selA.selectedIndex = 0;
+    selB.selectedIndex = 0;
   }
+  runBenchmarkComparison();
 }
 
 function runBenchmarkComparison() {
@@ -741,14 +836,14 @@ function runBenchmarkComparison() {
         <tr>
           <td><strong>Highlights & Pros</strong></td>
           <td>
-            <ul style="padding-left: 1rem; font-size: 0.8rem; color: var(--text-secondary);">
-              ${areaA.topPros.map(p => `<li>${p}</li>`).join('')}
-            </ul>
+            <div style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.4; display: flex; flex-direction: column; gap: 0.25rem;">
+              ${areaA.topPros.slice(0, 2).map(p => `<div style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">✨ ${p}</div>`).join('')}
+            </div>
           </td>
           <td>
-            <ul style="padding-left: 1rem; font-size: 0.8rem; color: var(--text-secondary);">
-              ${areaB.topPros.map(p => `<li>${p}</li>`).join('')}
-            </ul>
+            <div style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.4; display: flex; flex-direction: column; gap: 0.25rem;">
+              ${areaB.topPros.slice(0, 2).map(p => `<div style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">✨ ${p}</div>`).join('')}
+            </div>
           </td>
         </tr>
       </tbody>
@@ -814,14 +909,48 @@ async function submitCitizenReport() {
   }
 }
 
+function updateReportNeighborhoodOptions() {
+  const select = document.getElementById('repNeighborhood');
+  if (!select) return;
+  select.innerHTML = '';
+
+  const allKeys = Object.keys(benchmarkData);
+  const cityKeys = selectedCity === 'all'
+    ? allKeys
+    : allKeys.filter(k => (benchmarkData[k].city || 'pune').toLowerCase() === selectedCity.toLowerCase());
+
+  const keysToUse = cityKeys.length > 0 ? cityKeys : allKeys;
+  keysToUse.forEach(k => {
+    const opt = new Option(benchmarkData[k]?.name || k, benchmarkData[k]?.name || k);
+    select.add(opt);
+  });
+}
+
 function renderReportsFeed() {
   const feed = document.getElementById('reportsFeedContainer');
   if (!feed) return;
   feed.innerHTML = '';
 
-  document.getElementById('liveFeedBadge').innerText = `● ${citizenReports.length} Active Alerts`;
+  const filteredReports = selectedCity === 'all'
+    ? citizenReports
+    : citizenReports.filter(r => (r.city || 'pune').toLowerCase() === selectedCity.toLowerCase());
 
-  citizenReports.forEach(rep => {
+  const badgeEl = document.getElementById('liveFeedBadge');
+  if (badgeEl) {
+    badgeEl.innerText = `● ${filteredReports.length} Active Alerts`;
+  }
+
+  if (filteredReports.length === 0) {
+    feed.innerHTML = `
+      <div style="text-align: center; color: var(--text-muted); padding: 2rem 1rem;">
+        <div style="font-size: 1.8rem; margin-bottom: 0.4rem;">📢</div>
+        <p style="font-size: 0.85rem;">No active reports logged for this city yet. Be the first to report!</p>
+      </div>
+    `;
+    return;
+  }
+
+  filteredReports.forEach(rep => {
     const card = document.createElement('div');
     card.className = 'report-item-card';
 
@@ -838,17 +967,17 @@ function renderReportsFeed() {
       : '';
 
     card.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-        <div>
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem;">
+        <div style="flex: 1; min-width: 0;">
           ${hazardBadge}
-          <h4 style="margin-top: 0.35rem; font-size: 0.95rem;">${rep.title}</h4>
-          <span style="font-size: 0.75rem; color: var(--text-muted);">${rep.neighborhood} • by ${rep.author} (${rep.timeAgo})</span>
+          <h4 style="margin-top: 0.35rem; font-size: 0.95rem; font-weight: 700; color: var(--text-primary); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${rep.title}</h4>
+          <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 0.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${rep.neighborhood} • by ${rep.author} (${rep.timeAgo})</span>
         </div>
-        <button class="upvote-btn" onclick="upvoteReport('${rep.id}', this)">
+        <button class="upvote-btn" onclick="upvoteReport('${rep.id}', this)" style="border-radius: var(--radius-sm); flex-shrink: 0;">
           👍 <span>${rep.upvotes}</span>
         </button>
       </div>
-      <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">${rep.description}</p>
+      <p style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.45rem; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${rep.description}</p>
       ${mediaSnippet}
     `;
     feed.appendChild(card);
@@ -907,24 +1036,29 @@ async function sendChatMessage() {
   history.appendChild(aiMsg);
   history.scrollTop = history.scrollHeight;
 
+  const selectedCity = document.getElementById('citySelector')?.value || 'pune';
   try {
     const res = await fetch('/api/concierge', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt: query })
+      body: JSON.stringify({ prompt: query, city: selectedCity })
     });
 
     const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.detail || `Server error (${res.status})`);
+    }
     
     // Parse formatting (simple markdown replacement)
-    const formatted = data.answer
+    const rawAnswer = data.answer || data.response || '';
+    const formatted = rawAnswer
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.*?)\*/g, '<em>$1</em>')
       .replace(/\n/g, '<br>');
 
     aiMsg.querySelector('.msg-bubble').innerHTML = `
       ${formatted}
-      <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.5rem; text-align: right;">Engine: ${data.model}</div>
+      <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.5rem; text-align: right;">Engine: ${data.model || 'CityVibe Offline Intelligence'}</div>
     `;
   } catch (err) {
     aiMsg.querySelector('.msg-bubble').innerHTML = `<span style="color: var(--accent-rose);">Error getting recommendations: ${err.message}</span>`;
@@ -1049,21 +1183,33 @@ async function sendAiModalQuery() {
   `;
   chatBox.scrollTop = chatBox.scrollHeight;
 
+  const selectedCity = document.getElementById('citySelector')?.value || 'pune';
   try {
     const res = await fetch('/api/concierge', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt: text, contextCategory: 'all' })
+      body: JSON.stringify({ prompt: text, contextCategory: 'all', city: selectedCity })
     });
 
     const data = await res.json();
     const loading = document.getElementById('aiModalLoading');
     if (loading) loading.remove();
 
+    if (!res.ok) {
+      throw new Error(data.detail || `Server error (${res.status})`);
+    }
+
+    const rawText = data.answer || data.response || (typeof data === 'string' ? data : 'No response received.');
+    const formatted = rawText
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/\n/g, '<br>');
+
     chatBox.innerHTML += `
       <div style="margin-top: 0.75rem; padding: 0.85rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-glass); border-radius: var(--radius-md);">
         🤖 <strong>CityVibe Offline AI:</strong><br>
-        ${data.response.replace(/\n/g, '<br>')}
+        <div style="margin-top: 0.35rem; line-height: 1.55;">${formatted}</div>
+        <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.5rem; text-align: right;">Engine: ${data.model || 'Offline NLP Intelligence'}</div>
       </div>
     `;
   } catch (err) {

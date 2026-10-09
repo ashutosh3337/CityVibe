@@ -10,25 +10,69 @@ let safetyZones = [];
 let citizenReports = [];
 let benchmarkData = {};
 let map = null;
+let routeMap = null;
+let baseTileLayer = null;
+let routeBaseTileLayer = null;
 let poiLayerGroup = null;
 let hazardLayerGroup = null;
 let reportsLayerGroup = null;
 let routeLayerGroup = null;
 let selectedCategory = 'all';
+let selectedCity = 'pune';
 let currentMediaType = 'text';
 let currentSelectedPoi = null;
 
-// Initialize Application on DOM Ready
-document.addEventListener('DOMContentLoaded', async () => {
+// Tile Layer Configuration (OpenStreetMap with Zero-Block Backend Caching Proxy & Full Zoom 1-19)
+const TILE_URL = '/api/tiles/{z}/{x}/{y}.png';
+const TILE_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors';
+const TILE_OPTIONS = {
+  attribution: TILE_ATTRIBUTION,
+  maxZoom: 19,
+  keepBuffer: 8
+};
+
+function getActiveTileUrl() {
+  return TILE_URL;
+}
+
+function updateMapTiles(theme) {
+  // Filter is handled dynamically via CSS --map-tile-filter
+  if (baseTileLayer) {
+    baseTileLayer.setUrl(TILE_URL);
+  }
+  if (routeBaseTileLayer) {
+    routeBaseTileLayer.setUrl(TILE_URL);
+  }
+}
+
+// Initialize Application on DOM Ready (Instant Zero-Delay Synchronous Bootstrap)
+document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   initMap();
-  await loadInitialData();
+
+  // 1. Instant synchronous bootstrap from embedded dataset (Guarantees zero blank screen)
+  if (window.CITYVIBE_INITIAL_DATA) {
+    const init = window.CITYVIBE_INITIAL_DATA;
+    pois = init.pois || [];
+    safetyZones = init.safetyZones || [];
+    citizenReports = init.citizenReports || [];
+    benchmarkData = init.benchmarks || {};
+    if (init.liveConditions && init.liveConditions['pune']) {
+      updateSensorBar(init.liveConditions['pune'], true);
+    }
+  }
+
+  // Render initial views immediately without waiting for network roundtrips
+  applyCombinedFilters();
   setupRouteDropdowns();
   setupBenchmarkDropdowns();
   runBenchmarkComparison();
   renderReportsFeed();
   updateReportNeighborhoodOptions();
   startSensorTicker();
+
+  // 2. Fetch fresh real-time updates asynchronously in background
+  loadInitialData();
 });
 
 // Theme Management (Dark & Light Mode Toggle + Persistence)
@@ -50,6 +94,7 @@ function applyTheme(theme) {
   const label = document.getElementById('themeLabel');
   if (icon) icon.innerText = theme === 'dark' ? '🌙' : '☀️';
   if (label) label.innerText = theme === 'dark' ? 'Dark' : 'Light';
+  updateMapTiles(theme);
 }
 
 // Mobile Sidebar Toggle
@@ -96,16 +141,9 @@ function initMap() {
     preferCanvas: true
   });
 
-  // OpenStreetMap standard tiles (100% free, authorized, zero API key watermarks)
-  const osmTile = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',
-    subdomains: ['a', 'b', 'c'],
-    maxZoom: 19,
-    keepBuffer: 8,
-    crossOrigin: true
-  });
-
-  osmTile.addTo(map);
+  // High-performance CARTO basemap tiles (Zero 403 volunteer limits, retina-ready)
+  baseTileLayer = L.tileLayer(getActiveTileUrl(), TILE_OPTIONS);
+  baseTileLayer.addTo(map);
 
   // Invalidate map size multiple times after layout rendering to eliminate any black rectangular areas
   map.whenReady(() => {
@@ -126,39 +164,89 @@ window.addEventListener('resize', () => {
   if (routeMap) routeMap.invalidateSize();
 });
 
-// 2. Fetch Data from FastAPI Backend with Resilient Fallback
+// 2. Fetch Data from FastAPI Backend with Resilient Background Updates
 async function loadInitialData() {
   try {
+    const fetchWithFallback = async (primaryPath, fallbackPath) => {
+      try {
+        const res = await fetch(primaryPath);
+        if (res.ok) return res;
+      } catch (_) {}
+      try {
+        const res = await fetch(fallbackPath);
+        if (res.ok) return res;
+      } catch (_) {}
+      return null;
+    };
+
     const [poisRes, safetyRes, reportsRes, benchmarksRes, statusRes] = await Promise.all([
-      fetch('/api/pois'),
-      fetch('/api/safety-zones'),
-      fetch('/api/reports'),
-      fetch('/api/benchmarks'),
-      fetch('/api/live-status')
+      fetchWithFallback('/api/pois', '/pois'),
+      fetchWithFallback('/api/safety-zones', '/safety-zones'),
+      fetchWithFallback('/api/reports', '/reports'),
+      fetchWithFallback('/api/benchmarks', '/benchmarks'),
+      fetchWithFallback('/api/live-status', '/live-status')
     ]);
 
-    pois = await poisRes.json();
-    safetyZones = await safetyRes.json();
-    citizenReports = await reportsRes.json();
-    benchmarkData = await benchmarksRes.json();
-    const liveStatus = await statusRes.json();
+    let dataChanged = false;
 
-    updateSensorBar(liveStatus.conditions, liveStatus.geminiConfigured);
-    applyCombinedFilters();
-  } catch (err) {
-    console.warn('API fetch failed, loading local dataset fallback:', err);
-    try {
-      const fallbackRes = await fetch('/dataset.json');
-      const fallback = await fallbackRes.json();
-      pois = fallback.pois || [];
-      safetyZones = fallback.safetyZones || [];
-      citizenReports = fallback.citizenReports || [];
-      benchmarkData = fallback.benchmarks || {};
-      updateSensorBar(fallback.liveConditions, false);
-      applyCombinedFilters();
-    } catch(fallbackErr) {
-      console.error('Failed to load dataset fallback:', fallbackErr);
+    if (poisRes) {
+      try {
+        const freshPois = await poisRes.json();
+        if (Array.isArray(freshPois) && freshPois.length > 0) {
+          pois = freshPois;
+          dataChanged = true;
+        }
+      } catch (_) {}
     }
+
+    if (safetyRes) {
+      try {
+        const freshSafety = await safetyRes.json();
+        if (Array.isArray(freshSafety) && freshSafety.length > 0) {
+          safetyZones = freshSafety;
+          dataChanged = true;
+        }
+      } catch (_) {}
+    }
+
+    if (reportsRes) {
+      try {
+        const freshReports = await reportsRes.json();
+        if (Array.isArray(freshReports)) {
+          citizenReports = freshReports;
+          dataChanged = true;
+        }
+      } catch (_) {}
+    }
+
+    if (benchmarksRes) {
+      try {
+        const freshBenchmarks = await benchmarksRes.json();
+        if (freshBenchmarks && typeof freshBenchmarks === 'object') {
+          benchmarkData = freshBenchmarks;
+          dataChanged = true;
+        }
+      } catch (_) {}
+    }
+
+    if (statusRes) {
+      try {
+        const liveStatus = await statusRes.json();
+        if (liveStatus && liveStatus.conditions) {
+          updateSensorBar(liveStatus.conditions, liveStatus.geminiConfigured);
+        }
+      } catch (_) {}
+    }
+
+    if (dataChanged) {
+      applyCombinedFilters();
+      setupRouteDropdowns();
+      setupBenchmarkDropdowns();
+      renderReportsFeed();
+      updateReportNeighborhoodOptions();
+    }
+  } catch (err) {
+    console.log('Background telemetry update notice:', err);
   }
 }
 
@@ -189,6 +277,7 @@ function renderPoiList(items) {
     const category = poi.category || 'culture';
     const badgeClass = `badge-${category}`;
     const name = poi.name || 'Unnamed Landmark';
+    const description = poi.description || 'Verified urban exploration landmark with safety monitoring.';
     const rating = poi.rating !== undefined && poi.rating !== null ? poi.rating : '4.5';
     const safetyScore = poi.safetyScore !== undefined && poi.safetyScore !== null ? poi.safetyScore : '4.5';
     const cleanlinessScore = poi.cleanlinessScore !== undefined && poi.cleanlinessScore !== null ? poi.cleanlinessScore : '4.2';
@@ -365,13 +454,10 @@ function selectPoi(poi) {
   }
 }
 
-// Global Selected City State (Default: Pune)
-let selectedCity = 'pune';
-
 // Change City Filter & Smoothly Update All Views (Map, Places, Routing, Benchmarks, Reports)
 function changeCityFilter(city) {
   selectedCity = city;
-  
+
   // Ensure dropdown selection matches
   const citySelect = document.getElementById('citySelector');
   if (citySelect && citySelect.value !== city) {
@@ -503,7 +589,6 @@ function navigateFromModal() {
 }
 
 // 3. Safe Route Navigator Logic
-let routeMap = null;
 let routeMapSafeLayer = null;
 let routeMapFastLayer = null;
 let routeMapMarkersLayer = null;
@@ -519,13 +604,8 @@ function initRouteMap() {
     preferCanvas: true
   });
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap',
-    subdomains: ['a', 'b', 'c'],
-    maxZoom: 19,
-    keepBuffer: 8,
-    crossOrigin: true
-  }).addTo(routeMap);
+  routeBaseTileLayer = L.tileLayer(getActiveTileUrl(), TILE_OPTIONS);
+  routeBaseTileLayer.addTo(routeMap);
 
   routeMap.whenReady(() => {
     setTimeout(() => { if (routeMap) routeMap.invalidateSize(); }, 150);

@@ -8,7 +8,7 @@ import os
 import uuid
 import math
 from typing import Optional, List
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -99,6 +99,7 @@ class ApiKeyPayload(BaseModel):
 
 # Endpoints
 @app.get("/api/health")
+@app.get("/health")
 def health_check():
     return {
         "status": "healthy",
@@ -111,6 +112,7 @@ def health_check():
 
 
 @app.post("/api/configure-key")
+@app.post("/configure-key")
 def configure_key(payload: ApiKeyPayload):
     key = payload.apiKey.strip()
     success = init_gemini(key)
@@ -121,7 +123,45 @@ def configure_key(payload: ApiKeyPayload):
     }
 
 
+import urllib.request
+
+# In-Memory Fast Tile Cache
+tile_cache = {}
+TRANSPARENT_TILE = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15c4\x00\x00\x00\rIDATx\x9cc`\x00\x00\x00\x02\x00\x01H\xaf\xa4q\x00\x00\x00\x00IEND\xaeB`\x82'
+
+@app.get("/api/tiles/{z}/{x}/{y}.png")
+@app.get("/tiles/{z}/{x}/{y}.png")
+def get_map_tile(z: int, x: int, y: int):
+    cache_key = f"{z}/{x}/{y}"
+    if cache_key in tile_cache:
+        return Response(content=tile_cache[cache_key], media_type="image/png", headers={"Cache-Control": "public, max-age=86400"})
+
+    mirrors = [
+        f"https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+        f"https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+        f"https://b.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
+    ]
+    headers = {
+        "User-Agent": "CityVibe-Urban-Navigator/1.0 (https://github.com/ashutosh3337/CityVibe; contact: urban-safety)"
+    }
+    for url in mirrors:
+        try:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=6.0) as resp:
+                if resp.status == 200:
+                    data = resp.read()
+                    if len(tile_cache) > 4000:
+                        tile_cache.clear()
+                    tile_cache[cache_key] = data
+                    return Response(content=data, media_type="image/png", headers={"Cache-Control": "public, max-age=86400"})
+        except Exception:
+            continue
+
+    return Response(content=TRANSPARENT_TILE, media_type="image/png")
+
+
 @app.get("/api/pois")
+@app.get("/pois")
 def get_pois(category: Optional[str] = None, neighborhood: Optional[str] = None, city: Optional[str] = None):
     results = POIS
     if city and city != "all":
@@ -134,6 +174,7 @@ def get_pois(category: Optional[str] = None, neighborhood: Optional[str] = None,
 
 
 @app.get("/api/safety-zones")
+@app.get("/safety-zones")
 def get_safety_zones(city: Optional[str] = None):
     results = SAFETY_ZONES
     if city and city != "all":
@@ -142,6 +183,7 @@ def get_safety_zones(city: Optional[str] = None):
 
 
 @app.get("/api/live-status")
+@app.get("/live-status")
 def get_live_status(city: Optional[str] = "pune"):
     c_key = city.lower() if city and city.lower() in LIVE_CITY_CONDITIONS else "pune"
     cond = LIVE_CITY_CONDITIONS.get(c_key, LIVE_CITY_CONDITIONS["pune"])
@@ -155,6 +197,7 @@ def get_live_status(city: Optional[str] = "pune"):
 
 
 @app.get("/api/benchmarks")
+@app.get("/benchmarks")
 def get_benchmarks(city: Optional[str] = None):
     if city and city != "all":
         return {k: v for k, v in NEIGHBORHOODS_BENCHMARK.items() if (v.get("city") or "pune").lower() == city.lower()}
@@ -162,6 +205,7 @@ def get_benchmarks(city: Optional[str] = None):
 
 
 @app.get("/api/benchmarks/compare")
+@app.get("/benchmarks/compare")
 def compare_neighborhoods(areaA: str, areaB: str):
     data_a = NEIGHBORHOODS_BENCHMARK.get(areaA)
     data_b = NEIGHBORHOODS_BENCHMARK.get(areaB)
@@ -181,6 +225,7 @@ def compare_neighborhoods(areaA: str, areaB: str):
 
 
 @app.get("/api/reports")
+@app.get("/reports")
 def get_reports(city: Optional[str] = None):
     if city and city != "all":
         return [r for r in citizen_reports_db if (r.get("city") or "pune").lower() == city.lower()]
@@ -188,6 +233,7 @@ def get_reports(city: Optional[str] = None):
 
 
 @app.post("/api/reports")
+@app.post("/reports")
 def submit_report(report: CitizenReportCreate):
     hazard_level = "Low"
     desc_lower = report.description.lower()
@@ -245,6 +291,7 @@ def submit_report(report: CitizenReportCreate):
 
 
 @app.post("/api/reports/{report_id}/upvote")
+@app.post("/reports/{report_id}/upvote")
 def upvote_report(report_id: str):
     for rep in citizen_reports_db:
         if rep["id"] == report_id:
@@ -254,6 +301,7 @@ def upvote_report(report_id: str):
 
 
 @app.post("/api/route-plan")
+@app.post("/route-plan")
 def calculate_route(req: RouteRequest):
     p_orig = next((p for p in POIS if p["id"] == req.originPoiId), None)
     p_dest = next((p for p in POIS if p["id"] == req.destPoiId), None)
@@ -690,6 +738,7 @@ def generate_expert_nlp_response(user_query: str, city_hint: Optional[str] = "pu
 
 
 @app.post("/api/concierge")
+@app.post("/concierge")
 def ai_concierge(req: ConciergeRequest):
     user_query = req.prompt.strip()
     if not user_query:

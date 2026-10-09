@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CityVibe — Smart Urban Exploration & Safety Intelligence</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  
+  <!-- App Style -->
+  <link rel="stylesheet" href="/style.css?v=2.1">
+</head>
+<body>
+
+  <!-- Top Navigation & Live City Ticker -->
+  <header class="header">
+    <div class="logo-container" onclick="switchTab('tab-explore')">
+      <div class="logo-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </div>
+      <div class="logo-text">
+        <h1>CityVibe</h1>
+        <span>AI Urban Navigator</span>
+      </div>
+    </div>
+
+    <!-- Live Smart City Sensor Metrics -->
+    <div class="city-sensor-bar" id="liveSensorBar">
+      <div class="sensor-item">
+        <span class="pulse-indicator"></span>
+        <label for="citySelector" style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; margin: 0;">City:</label>
+        <select id="citySelector" class="city-select-dropdown" onchange="changeCityFilter(this.value)">
+          <option value="all">🇮🇳 All India (All Cities)</option>
+          <option value="pune" selected>📍 Pune, Maharashtra</option>
+          <option value="mumbai">📍 Mumbai & MMR</option>
+          <option value="delhi">📍 Delhi NCR</option>
+          <option value="bengaluru">📍 Bengaluru, Karnataka</option>
+          <option value="jaipur">📍 Jaipur, Rajasthan</option>
+        </select>
+      </div>
+      <div class="sensor-item">
+        <span>🌤️ <strong id="sensorTemp">26°C</strong></span>
+      </div>
+      <div class="sensor-item">
+        <span>AQI: <strong id="sensorAqi" style="color: var(--accent-emerald)">62 (Good)</strong></span>
+      </div>
+      <div class="sensor-item">
+        <span>🚦 Traffic: <strong id="sensorTraffic">32% Smooth</strong></span>
+      </div>
+      <div class="sensor-item" style="cursor: pointer;" onclick="openApiKeyModal()" title="View CityVibe AI Engine Status">
+        <span id="aiStatusPill" class="badge badge-culture" style="text-transform: none; font-size: 0.72rem; padding: 2px 8px;">⚡ AI Engine: Ready (Offline)</span>
+      </div>
+      <!-- Theme Switcher Button -->
+      <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle Dark / Light Theme" aria-label="Toggle Theme">
+        <span class="theme-icon" id="themeIcon">🌙</span>
+        <span class="theme-label" id="themeLabel">Dark</span>
+      </button>
+    </div>
+
+    <!-- Main Navigation Tabs -->
+    <nav class="nav-tabs" role="tablist">
+      <button class="nav-btn active" onclick="switchTab('tab-explore')" id="nav-explore">
+        🗺️ Map & Exploration
+      </button>
+      <button class="nav-btn" onclick="switchTab('tab-route')" id="nav-route">
+        🛡️ Safe Routing
+      </button>
+      <button class="nav-btn" onclick="switchTab('tab-compare')" id="nav-compare">
+        ⚖️ Best vs Worst
+      </button>
+      <button class="nav-btn" onclick="switchTab('tab-reports')" id="nav-reports">
+        📢 Citizen Hub
+      </button>
+    </nav>
+  </header>
+
+  <!-- TAB 1: INTERACTIVE EXPLORATION & SAFETY MAP -->
+  <section id="tab-explore" class="tab-pane active">
+    <!-- Mobile Sidebar Toggle -->
+    <button class="mobile-sidebar-toggle" id="mobileSidebarToggle" onclick="toggleMobileSidebar()" aria-label="Toggle Locations Panel">
+      <span id="mobileSidebarIcon">📋</span>
+      <span id="mobileSidebarText">View Hotspots</span>
+    </button>
+    <div class="map-view-layout" id="mapViewLayout">
+      <!-- Left Sidebar: POI Explorer -->
+      <div class="sidebar-panel" id="sidebarPanel">
+        <div class="sidebar-header">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>
+              <span>✨ Curated Hotspots & Safety</span>
+            </h2>
+            <button class="sidebar-close-btn" onclick="toggleMobileSidebar()" title="Close sidebar">✕</button>
+          </div>
+          <div class="filter-group">
+            <button class="filter-chip active" onclick="filterCategory('all', this)">All</button>
+            <button class="filter-chip" onclick="filterCategory('heritage', this)">🏛️ Heritage</button>
+            <button class="filter-chip" onclick="filterCategory('food', this)">🍢 Food</button>
+            <button class="filter-chip" onclick="filterCategory('fashion', this)">🛍️ Fashion</button>
+            <button class="filter-chip" onclick="filterCategory('culture', this)">🎨 Culture</button>
+            <button class="filter-chip" onclick="filterCategory('hotel', this)">🏨 Stays</button>
+          </div>
+        </div>
+
+        <div class="poi-list" id="poiListContainer">
+          <!-- Dynamically populated POI cards -->
+        </div>
+      </div>
+
+      <!-- Right Panel: Interactive Leaflet Map -->
+      <div class="map-wrapper">
+        <div id="leafletMap"></div>
+
+        <!-- Floating Map Layers & Overlays -->
+        <div class="map-controls-overlay">
+          <div class="layer-toggle-card">
+            <div class="layer-toggle-title">Map Layers</div>
+            <label class="toggle-item">
+              <span>📍 POI Hotspots</span>
+              <div class="toggle-switch">
+                <input type="checkbox" id="layerTogglePoi" checked onchange="toggleMapLayer('pois')">
+                <span class="toggle-slider"></span>
+              </div>
+            </label>
+            <label class="toggle-item">
+              <span>⚠️ Safety & Hazard Zones</span>
+              <div class="toggle-switch">
+                <input type="checkbox" id="layerToggleHazards" checked onchange="toggleMapLayer('hazards')">
+                <span class="toggle-slider"></span>
+              </div>
+            </label>
+            <label class="toggle-item">
+              <span>📢 Citizen Live Alerts</span>
+              <div class="toggle-switch">
+                <input type="checkbox" id="layerToggleReports" checked onchange="toggleMapLayer('reports')">
+                <span class="toggle-slider"></span>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 2: SAFE ROUTE NAVIGATOR ("VIBE ROUTING") -->
+  <section id="tab-route" class="tab-pane">
+    <div class="section-container">
+      <div class="section-title-wrap">
+        <h2>🛡️ Safe & Smart Route Simulator</h2>
+        <p>Compare conventional fastest routes with safety-weighted pathways that bypass unlit stretches and accident-prone zones.</p>
+      </div>
+
+      <div class="routing-grid">
+        <!-- Route Form -->
+        <div class="glass-card">
+          <h3 style="margin-bottom: 1.25rem; font-size: 1.1rem;">Plan Journey</h3>
+          <div class="form-group">
+            <label for="routeOrigin">Starting Landmark</label>
+            <select id="routeOrigin" class="form-control">
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="routeDestination">Destination Landmark</label>
+            <select id="routeDestination" class="form-control">
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="routeTravelTime">Preferred Travel Period</label>
+            <select id="routeTravelTime" class="form-control">
+              <option value="evening">Late Evening (8:00 PM - Midnight)</option>
+              <option value="day">Daytime (10:00 AM - 5:00 PM)</option>
+              <option value="late_night">Late Night (12:00 AM - 4:00 AM)</option>
+            </select>
+          </div>
+
+          <button class="btn-primary" onclick="calculateRoutePlan()">
+            <span>⚡ Calculate Safety Route</span>
+          </button>
+        </div>
+
+        <!-- Route Comparison & Map Display Output -->
+        <div class="route-display-column">
+          <!-- Live Route Interactive Leaflet Map -->
+          <div class="glass-card" style="padding: 0; overflow: hidden; margin-bottom: 1.5rem; height: 320px; position: relative;">
+            <div id="routeMap" style="width: 100%; height: 100%; background: var(--bg-primary);"></div>
+            <div style="position: absolute; bottom: 10px; left: 10px; z-index: 500; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; border: 1px solid var(--border-glass);">
+              <span style="color: #10b981; font-weight: 700;">🟢 Safe Boulevard</span> &nbsp;|&nbsp; 
+              <span style="color: #f59e0b; font-weight: 700;">🟠 Direct Arterial</span>
+            </div>
+          </div>
+
+          <div class="route-results-container" id="routeResultsContainer">
+            <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+              Select a starting and destination landmark above, then click <strong>Calculate Safety Route</strong>.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 3: BEST VS. WORST COMPARISON MATRIX -->
+  <section id="tab-compare" class="tab-pane">
+    <div class="section-container">
+      <div class="section-title-wrap">
+        <h2>⚖️ Neighborhood "Best vs. Worst" Benchmark</h2>
+        <p>Direct side-by-side metric comparison across safety, cleanliness, affordability, ratings, and accessibility.</p>
+      </div>
+
+      <div class="glass-card">
+        <div class="compare-selectors">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="compareAreaA">Select Area A</label>
+            <select id="compareAreaA" class="form-control" onchange="runBenchmarkComparison()"></select>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="compareAreaB">Select Area B</label>
+            <select id="compareAreaB" class="form-control" onchange="runBenchmarkComparison()"></select>
+          </div>
+          <button class="btn-primary" onclick="runBenchmarkComparison()" style="width: auto; padding: 0.75rem 1.5rem;">
+            <span>🔄 Re-Evaluate</span>
+          </button>
+        </div>
+
+        <div class="comparison-table-wrap" id="benchmarkResultsWrap">
+          <!-- Comparative matrix table will render here -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 4: MULTIMODAL CITIZEN REPORTING & VERIFICATION HUB -->
+  <section id="tab-reports" class="tab-pane">
+    <div class="section-container">
+      <div class="section-title-wrap">
+        <h2>📢 Multimodal Citizen Reporting Hub</h2>
+        <p>Crowdsource live hazards, broken infrastructure, waterlogging, or lively street spots with instant NLP categorization.</p>
+      </div>
+
+      <div class="reports-layout">
+        <!-- New Report Form -->
+        <div class="glass-card">
+          <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">Submit Live Report</h3>
+          
+          <div class="form-group">
+            <label for="repCategory">Report Category</label>
+            <select id="repCategory" class="form-control">
+              <option value="safety">🚨 Safety Hazard / Poor Lighting</option>
+              <option value="traffic">🚦 Traffic Congestion / Breakdown</option>
+              <option value="cleanliness">🧹 Cleanliness / Waste Accumulation</option>
+              <option value="food_vibe">🎉 Live Food & Cultural Vibe</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="repNeighborhood">City Neighborhood</label>
+            <select id="repNeighborhood" class="form-control">
+              <option value="Deccan & FC Road">Deccan & FC Road</option>
+              <option value="Koregaon Park">Koregaon Park</option>
+              <option value="Shivajinagar & JM Road">Shivajinagar & JM Road</option>
+              <option value="Baner & Balewadi">Baner & Balewadi</option>
+              <option value="Swargate & Camp">Swargate & Camp</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="repTitle">Incident Summary</label>
+            <input type="text" id="repTitle" class="form-control" placeholder="e.g. Broken pavement & unlit corner" required>
+          </div>
+
+          <div class="form-group">
+            <label for="repDescription">Detailed Observation</label>
+            <textarea id="repDescription" class="form-control" rows="3" placeholder="Provide details, landmark cues or precautions..." required></textarea>
+          </div>
+
+          <!-- Multimodal Input Options -->
+          <div class="form-group">
+            <label>Multimodal Attachment</label>
+            <div style="display: flex; gap: 0.5rem;">
+              <button type="button" class="filter-chip active" id="btnMediaText" onclick="setMediaType('text')">📝 Text Only</button>
+              <button type="button" class="filter-chip" id="btnMediaVoice" onclick="setMediaType('voice_note')">🎙️ Voice Note</button>
+              <button type="button" class="filter-chip" id="btnMediaPhoto" onclick="setMediaType('photo')">📷 Photo Tag</button>
+            </div>
+          </div>
+
+          <div id="voiceRecorderPreview" style="display: none; margin-bottom: 1rem;" class="voice-wave-player">
+            <span>🎙️ Simulated Audio Waveform</span>
+            <strong style="color: var(--accent-emerald);">0:16 recorded</strong>
+          </div>
+
+          <div id="photoInputWrap" style="display: none; margin-bottom: 1rem;">
+            <input type="text" id="repPhotoUrl" class="form-control" placeholder="Image URL (optional)">
+          </div>
+
+          <button class="btn-primary" onclick="submitCitizenReport()">
+            <span>🚀 Publish Verified Report</span>
+          </button>
+        </div>
+
+        <!-- Live Feed Stream -->
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h3 style="font-size: 1.1rem;">Verified Live Incident Stream</h3>
+            <span style="font-size: 0.8rem; color: var(--accent-cyan);" id="liveFeedBadge">● 3 Active Alerts</span>
+          </div>
+          <div id="reportsFeedContainer">
+            <!-- Feed cards populated dynamically -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POI Detail Modal -->
+  <div class="modal-backdrop" id="poiModalBackdrop" onclick="closePoiModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <button class="close-btn" onclick="closePoiModal()">✕</button>
+      <img id="modalPoiImage" class="modal-image" src="" alt="Landmark Image">
+      <div class="modal-body">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div>
+            <span id="modalPoiBadge" class="badge badge-heritage">Heritage</span>
+            <h2 id="modalPoiTitle" style="margin-top: 0.35rem; font-size: 1.4rem;">Landmark Name</h2>
+            <p id="modalPoiNeighborhood" style="color: var(--text-secondary); font-size: 0.85rem;">Neighborhood</p>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 1.25rem; font-weight: 800; color: var(--accent-amber);" id="modalPoiRating">★ 4.8</div>
+            <span id="modalPoiPrice" style="font-size: 0.75rem; color: var(--text-muted);">Budget</span>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin: 1.25rem 0; padding: 0.75rem; background: var(--bg-surface); border-radius: var(--radius-md);">
+          <div class="stat-box">
+            <span>Safety Index</span>
+            <strong id="modalPoiSafety" style="color: var(--accent-emerald);">4.8 / 5</strong>
+          </div>
+          <div class="stat-box">
+            <span>Cleanliness</span>
+            <strong id="modalPoiClean">4.5 / 5</strong>
+          </div>
+          <div class="stat-box">
+            <span>Best Hours</span>
+            <strong id="modalPoiHours" style="font-size: 0.8rem;">5 PM - 8 PM</strong>
+          </div>
+        </div>
+
+        <p id="modalPoiDesc" style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;"></p>
+        
+        <div style="background: rgba(139, 92, 246, 0.1); border-left: 3px solid var(--accent-purple); padding: 0.85rem; border-radius: 4px; margin-bottom: 1.25rem;">
+          <h4 style="color: var(--accent-purple); font-size: 0.85rem; text-transform: uppercase; margin-bottom: 0.25rem;">📜 Historical Context & Heritage</h4>
+          <p id="modalPoiHistory" style="font-size: 0.85rem; color: var(--text-primary);"></p>
+        </div>
+
+        <button class="btn-primary" id="modalNavigateBtn" onclick="navigateFromModal()">
+          <span>🛡️ Plan Safe Route to this Spot</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CityVibe AI Engine & Assistant Modal -->
+  <div class="modal-backdrop" id="apiKeyModalBackdrop" style="display: none;" onclick="closeApiKeyModal(event)">
+    <div class="modal-content" style="max-width: 600px; border-radius: var(--radius-xl);" onclick="event.stopPropagation()">
+      <div class="modal-header" style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-glass); display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="font-size: 1.4rem;">🤖</span>
+          <div>
+            <h3 style="font-size: 1.15rem; margin: 0;">CityVibe AI Engine</h3>
+            <span style="font-size: 0.75rem; color: var(--accent-emerald);">● Built-in Offline Intelligence Active</span>
+          </div>
+        </div>
+        <button type="button" class="close-btn" onclick="closeApiKeyModal(event)">✕</button>
+      </div>
+
+      <div class="modal-body" style="padding: 1.5rem;">
+        <div class="prompt-chips" style="margin-bottom: 1rem; flex-wrap: wrap; gap: 0.4rem;">
+          <button class="prompt-chip" onclick="askAiModalPrompt('What are the safest night areas in Pune?')">🌙 Safe Night Areas</button>
+          <button class="prompt-chip" onclick="askAiModalPrompt('Recommend best street food in FC Road & Deccan')">🍢 Best Street Food</button>
+          <button class="prompt-chip" onclick="askAiModalPrompt('Tell me the history of Shaniwar Wada & Aga Khan Palace')">🏛️ Heritage History</button>
+        </div>
+
+        <div id="aiModalChatBox" style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.25rem; min-height: 180px; max-height: 280px; overflow-y: auto; margin-bottom: 1rem; font-size: 0.9rem; line-height: 1.55; color: var(--text-primary);">
+          <div style="color: var(--text-secondary);">
+            👋 Hello explorer! I am your <strong>CityVibe Offline AI Assistant</strong>. Ask me anything about safety in Pune, best food katas, historical monuments, or safe routes — zero API key required!
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 0.6rem;">
+          <input type="text" id="aiModalInput" class="form-control" placeholder="Ask about safety, food, history, or routes..." onkeydown="if(event.key==='Enter') sendAiModalQuery()">
+          <button class="btn-primary" style="width: auto; padding: 0 1.25rem;" onclick="sendAiModalQuery()">
+            <span>Ask AI</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet & App JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="/app.js?v=2.1"></script>
+</body>
+</html>

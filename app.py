@@ -124,17 +124,23 @@ def configure_key(payload: ApiKeyPayload):
 
 
 import urllib.request
+from collections import OrderedDict
+import threading
 
-# In-Memory Fast Tile Cache
-tile_cache = {}
+# In-Memory Fast LRU Tile Cache with Concurrency Safety
+tile_cache = OrderedDict()
+tile_cache_lock = threading.Lock()
+MAX_TILE_CACHE = 4000
 TRANSPARENT_TILE = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15c4\x00\x00\x00\rIDATx\x9cc`\x00\x00\x00\x02\x00\x01H\xaf\xa4q\x00\x00\x00\x00IEND\xaeB`\x82'
 
 @app.get("/api/tiles/{z}/{x}/{y}.png")
 @app.get("/tiles/{z}/{x}/{y}.png")
 def get_map_tile(z: int, x: int, y: int):
     cache_key = f"{z}/{x}/{y}"
-    if cache_key in tile_cache:
-        return Response(content=tile_cache[cache_key], media_type="image/png", headers={"Cache-Control": "public, max-age=86400"})
+    with tile_cache_lock:
+        if cache_key in tile_cache:
+            tile_cache.move_to_end(cache_key)
+            return Response(content=tile_cache[cache_key], media_type="image/png", headers={"Cache-Control": "public, max-age=86400"})
 
     mirrors = [
         f"https://tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -150,9 +156,10 @@ def get_map_tile(z: int, x: int, y: int):
             with urllib.request.urlopen(req, timeout=6.0) as resp:
                 if resp.status == 200:
                     data = resp.read()
-                    if len(tile_cache) > 4000:
-                        tile_cache.clear()
-                    tile_cache[cache_key] = data
+                    with tile_cache_lock:
+                        if len(tile_cache) >= MAX_TILE_CACHE:
+                            tile_cache.popitem(last=False)
+                        tile_cache[cache_key] = data
                     return Response(content=data, media_type="image/png", headers={"Cache-Control": "public, max-age=86400"})
         except Exception:
             continue

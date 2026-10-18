@@ -1,0 +1,28 @@
+# CodeRabbit Configuration File
+# Documentation: https://docs.coderabbit.ai/guides/configure-coderabbit
+
+version: "2"
+language: "en-US"
+tone_instructions: "Be concise, constructive, and prioritize security, concurrency, and performance."
+
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - "main"
+      - "master"
+  collapse_walkthrough: false
+  path_instructions:
+    - path: "api/**"
+      instructions: "Check for serverless cold start efficiency and path resolution."
+    - path: "app.py"
+      instructions: "Ensure API endpoints validate inputs and handle exceptions gracefully."
+    - path: "static/**"
+      instructions: "Ensure user inputs are properly sanitized to prevent Cross-Site Scripting (XSS)."
+
+chat:
+  auto_reply: true

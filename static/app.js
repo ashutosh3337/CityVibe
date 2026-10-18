@@ -42,10 +42,27 @@ function updateMapTiles(theme) {
   }
   if (routeBaseTileLayer) {
     routeBaseTileLayer.setUrl(TILE_URL);
-  }
+// Security: XSS Sanitization Helpers
+function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function formatAiMarkdown(text) {
+  const safeText = escapeHtml(text || '');
+  return safeText
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/\n/g, '<br>');
 }
 
 // Initialize Application on DOM Ready (Instant Zero-Delay Synchronous Bootstrap)
+
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   initMap();
@@ -1075,14 +1092,14 @@ function renderReportsFeed() {
       <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem;">
         <div style="flex: 1; min-width: 0;">
           ${hazardBadge}
-          <h4 style="margin-top: 0.35rem; font-size: 0.95rem; font-weight: 700; color: var(--text-primary); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${rep.title}</h4>
-          <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 0.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${rep.neighborhood} • by ${rep.author} (${rep.timeAgo})</span>
+          <h4 style="margin-top: 0.35rem; font-size: 0.95rem; font-weight: 700; color: var(--text-primary); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${escapeHtml(rep.title)}</h4>
+          <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 0.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(rep.neighborhood)} • by ${escapeHtml(rep.author)} (${escapeHtml(rep.timeAgo)})</span>
         </div>
-        <button class="upvote-btn" onclick="upvoteReport('${rep.id}', this)" style="border-radius: var(--radius-sm); flex-shrink: 0;">
-          👍 <span>${rep.upvotes}</span>
+        <button class="upvote-btn" onclick="upvoteReport('${escapeHtml(rep.id)}', this)" style="border-radius: var(--radius-sm); flex-shrink: 0;">
+          👍 <span>${Number(rep.upvotes) || 0}</span>
         </button>
       </div>
-      <p style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.45rem; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${rep.description}</p>
+      <p style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.45rem; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${escapeHtml(rep.description)}</p>
       ${mediaSnippet}
     `;
     feed.appendChild(card);
@@ -1121,12 +1138,12 @@ async function sendChatMessage() {
 
   const history = document.getElementById('chatHistoryContainer');
   
-  // Append user message
+  // Append user message (XSS safe)
   const userMsg = document.createElement('div');
   userMsg.className = 'chat-msg user';
   userMsg.innerHTML = `
     <div class="chat-avatar avatar-user">👤</div>
-    <div class="msg-bubble">${query}</div>
+    <div class="msg-bubble">${escapeHtml(query)}</div>
   `;
   history.appendChild(userMsg);
   input.value = '';
@@ -1154,19 +1171,16 @@ async function sendChatMessage() {
       throw new Error(data.detail || `Server error (${res.status})`);
     }
     
-    // Parse formatting (simple markdown replacement)
+    // Parse formatting securely via formatAiMarkdown
     const rawAnswer = data.answer || data.response || '';
-    const formatted = rawAnswer
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      .replace(/\n/g, '<br>');
+    const formatted = formatAiMarkdown(rawAnswer);
 
     aiMsg.querySelector('.msg-bubble').innerHTML = `
       ${formatted}
-      <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.5rem; text-align: right;">Engine: ${data.model || 'CityVibe Offline Intelligence'}</div>
+      <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.5rem; text-align: right;">Engine: ${escapeHtml(data.model || 'CityVibe Offline Intelligence')}</div>
     `;
   } catch (err) {
-    aiMsg.querySelector('.msg-bubble').innerHTML = `<span style="color: var(--accent-rose);">Error getting recommendations: ${err.message}</span>`;
+    aiMsg.querySelector('.msg-bubble').innerHTML = `<span style="color: var(--accent-rose);">Error getting recommendations: ${escapeHtml(err.message)}</span>`;
   }
   history.scrollTop = history.scrollHeight;
 }
@@ -1277,10 +1291,10 @@ async function sendAiModalQuery() {
   if (!text) return;
   input.value = '';
 
-  // Append user query
+  // Append user query (XSS safe)
   chatBox.innerHTML += `
     <div style="margin-top: 0.85rem; padding: 0.6rem 0.85rem; background: var(--gradient-brand); color: #fff; border-radius: var(--radius-md); font-weight: 600;">
-      👤 ${text}
+      👤 ${escapeHtml(text)}
     </div>
     <div id="aiModalLoading" style="margin-top: 0.6rem; color: var(--accent-cyan); font-style: italic;">
       🤖 Synthesizing smart local intelligence...
@@ -1305,16 +1319,13 @@ async function sendAiModalQuery() {
     }
 
     const rawText = data.answer || data.response || (typeof data === 'string' ? data : 'No response received.');
-    const formatted = rawText
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      .replace(/\n/g, '<br>');
+    const formatted = formatAiMarkdown(rawText);
 
     chatBox.innerHTML += `
       <div style="margin-top: 0.75rem; padding: 0.85rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-glass); border-radius: var(--radius-md);">
         🤖 <strong>CityVibe Offline AI:</strong><br>
         <div style="margin-top: 0.35rem; line-height: 1.55;">${formatted}</div>
-        <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.5rem; text-align: right;">Engine: ${data.model || 'Offline NLP Intelligence'}</div>
+        <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.5rem; text-align: right;">Engine: ${escapeHtml(data.model || 'Offline NLP Intelligence')}</div>
       </div>
     `;
   } catch (err) {
@@ -1322,7 +1333,7 @@ async function sendAiModalQuery() {
     if (loading) loading.remove();
     chatBox.innerHTML += `
       <div style="margin-top: 0.75rem; color: var(--accent-rose);">
-        ⚠️ Error: ${err.message}
+        ⚠️ Error: ${escapeHtml(err.message)}
       </div>
     `;
   }

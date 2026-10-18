@@ -42,6 +42,9 @@ function updateMapTiles(theme) {
   }
   if (routeBaseTileLayer) {
     routeBaseTileLayer.setUrl(TILE_URL);
+  }
+}
+
 // Security: XSS Sanitization Helpers
 function escapeHtml(str) {
   if (str === null || str === undefined) return '';

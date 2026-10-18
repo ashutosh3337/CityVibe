@@ -56,8 +56,8 @@ pip install -r requirements.txt
 python -m uvicorn app:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-- 🌐 **Web App**: [http://127.0.0.1:8000](http://127.0.0.1:8000)
-- 📚 **Swagger Docs**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+- 🌐 **Web App**: [http://127.0.0.1:8000](http://127.0.0.1:8000)   https://cityvibe-eta.vercel.app/
+
 
 ---
 
